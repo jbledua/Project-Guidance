@@ -15,6 +15,7 @@ export class NotfoundPageComponent {
     this.attemptedUrl = this.route.snapshot.url.join('/');
   }
 
+  // Go back to the previous page
   goBack(): void {
     this.location.back();
   }
