@@ -9,11 +9,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { NotfoundPageComponent } from './pages/notfound-page/notfound-page.component';
 
-// Material Design Components
-import {MatCardModule} from '@angular/material/card';
-import {MatButtonModule} from '@angular/material/button';
 
+// Import ReactiveFormsModule for using FormBuilder
+import { ReactiveFormsModule } from '@angular/forms';
 
+// Import Angular Material modules
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatDividerModule} from '@angular/material/divider';
 
 @NgModule({
   declarations: [
@@ -26,7 +31,11 @@ import {MatButtonModule} from '@angular/material/button';
     AppRoutingModule,
     BrowserAnimationsModule,
     MatCardModule,
-    MatButtonModule
+    MatButtonModule,
+    MatInputModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatDividerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

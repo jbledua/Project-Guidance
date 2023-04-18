@@ -1,3 +1,23 @@
 <div class="center-container">
-    <p>login-page works!</p>
+    <mat-card>
+        <mat-card-content>
+            <form class="form-container"[formGroup]="loginForm">
+                    <h1>Login</h1>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Email</mat-label>
+                        <input matInput formControlName="email" type="email" required />
+                    </mat-form-field>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Password</mat-label>
+                        <input matInput formControlName="password" type="password" required />
+                    </mat-form-field>
+                    <mat-divider></mat-divider>
+                    <button mat-raised-button color="primary" type="submit">Login</button>
+                    <a>Don't have an account?<a mat-button routerLink="/register">Register</a></a>
+            </form>
+        </mat-card-content>
+    <mat-card-footer>
+       
+    </mat-card-footer>
+    </mat-card>
 </div>
