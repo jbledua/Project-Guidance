@@ -8,7 +8,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // Pages Components
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { NotfoundPageComponent } from './pages/notfound-page/notfound-page.component';
-
+import { InboxPageComponent } from './pages/inbox-page/inbox-page.component';
+import { RegisterPageComponent } from './pages/register-page/register-page.component';
 
 // Import ReactiveFormsModule for using FormBuilder
 import { ReactiveFormsModule } from '@angular/forms';
@@ -24,13 +25,16 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDividerModule}  from '@angular/material/divider';
 
+import {MatStepperModule} from '@angular/material/stepper';
+
+
 // Import Firebase packages
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 
 // Import environment
 import { environment } from './environments/environment';
-import { InboxPageComponent } from './pages/inbox-page/inbox-page.component';
+
 
 // Initialize Firebase
 const app = initializeApp(environment.firebase);
@@ -44,6 +48,7 @@ const auth = getAuth(app);
     LoginPageComponent,
     NotfoundPageComponent,
     InboxPageComponent,
+    RegisterPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -57,7 +62,8 @@ const auth = getAuth(app);
     MatInputModule,
     MatFormFieldModule,
     ReactiveFormsModule,
-    MatDividerModule
+    MatDividerModule,
+    MatStepperModule
   ],
   providers: [],
   bootstrap: [AppComponent]

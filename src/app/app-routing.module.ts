@@ -5,13 +5,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { NotfoundPageComponent } from './pages/notfound-page/notfound-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { InboxPageComponent } from './pages/inbox-page/inbox-page.component';
+import { RegisterPageComponent } from './pages/register-page/register-page.component';
 
 // Import the AuthGuard
-import { AuthGuard } from './guards/auth.guard';
-
+import { AuthGuard } from './guards/auth/auth.guard';
 
 const routes: Routes = [
   { path: 'inbox', component: InboxPageComponent,canActivate: [AuthGuard],},
+  { path: 'register', component: RegisterPageComponent},
   { path: 'login', component: LoginPageComponent },
   { path: '', redirectTo: '/inbox', pathMatch: 'full' },
   { path: '**', component: NotfoundPageComponent }
