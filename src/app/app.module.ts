@@ -26,6 +26,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDividerModule}  from '@angular/material/divider';
 
 import {MatStepperModule} from '@angular/material/stepper';
+import {MatProgressBarModule } from '@angular/material/progress-bar';
 
 
 // Import Firebase packages
@@ -63,7 +64,8 @@ const auth = getAuth(app);
     MatFormFieldModule,
     ReactiveFormsModule,
     MatDividerModule,
-    MatStepperModule
+    MatStepperModule,
+    MatProgressBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,4 +1,4 @@
-<mat-stepper headerPosition="top" #stepper class="center-container">
+<mat-stepper linear  headerPosition="top" #stepper class="center-container">
     <mat-step [stepControl]="registerForm">
         <form [formGroup]="registerForm">
         <ng-template matStepLabel>Account</ng-template>
@@ -36,8 +36,11 @@
             </mat-card-content>
             <mat-card-actions>
                 <button mat-button routerLink="/login">Cancel</button>
-                <button mat-raised-button color="primary" type="submit" matStepperNext>Next</button>
+                <button mat-raised-button color="primary" type="submit" (click)="submitRegisterForm()">Next</button>
             </mat-card-actions>
+            <mat-card-footer>
+                <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+            </mat-card-footer>
         </mat-card>
         </form>
     </mat-step>
