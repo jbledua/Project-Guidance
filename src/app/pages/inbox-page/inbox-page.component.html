@@ -1,3 +1,19 @@
 <div class="center-container">
-    <p>inbox-page works!</p>
+    <div class="inbox-container">
+        <h1>Active Messages</h1>
+        <mat-list>
+            <div *ngFor="let message of messages">
+                <mat-list-item>
+                    <!-- Customize the message content as needed -->
+                    <span  matListItemTitle>{{ message.title }}</span >
+                    <span  matListItemLine>{{ message.content }}</span >    
+                </mat-list-item>
+                <mat-divider></mat-divider>
+            </div>
+        </mat-list>
+      </div>
+      
+      <button mat-fab class="create-message-button" color="primary" routerLink="/new-thread">
+        <mat-icon>add</mat-icon>
+      </button>
 </div>
