@@ -14,11 +14,15 @@ import { NotfoundPageComponent } from './pages/notfound-page/notfound-page.compo
 import { ReactiveFormsModule } from '@angular/forms';
 
 // Import Angular Material modules
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {MatDividerModule} from '@angular/material/divider';
+import { MatDividerModule}  from '@angular/material/divider';
 
 // Import Firebase packages
 import { initializeApp } from 'firebase/app';
@@ -45,6 +49,9 @@ const auth = getAuth(app);
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatMenuModule,
     MatCardModule,
     MatButtonModule,
     MatInputModule,
