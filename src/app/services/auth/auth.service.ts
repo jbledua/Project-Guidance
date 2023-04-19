@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import { getAuth, signInWithEmailAndPassword,createUserWithEmailAndPassword , User, signOut, onAuthStateChanged } from 'firebase/auth'; // Import Firebase auth functions and User type
 import { BehaviorSubject } from 'rxjs'; // Import BehaviorSubject
 
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
+
+
+
 
 
 @Injectable({
@@ -11,6 +15,8 @@ export class AuthService {
   private auth = getAuth(); // Initialize Firebase Authentication
   private authState = new BehaviorSubject<boolean>(false);
   public authState$ = this.authState.asObservable();
+
+  private db = getFirestore();
 
   constructor() {
     // Listen for auth state changes
@@ -45,7 +51,6 @@ export class AuthService {
     return signOut(this.auth)
       .then(() => {
         // Sign-out successful.
-        console.log('Sign-out successful.');
       })
       .catch((error) => {
         // An error happened.
@@ -60,11 +65,15 @@ export class AuthService {
   }
 
   // Create a new user with email and password
-  createUser(email: string, password: string): Promise<User> {
+  createUser(email: string, password: string, name: string): Promise<User> {
     return createUserWithEmailAndPassword(this.auth, email, password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
+
+        // Add user's data to Firestore
+        this.addUserDataToFirestore(user.uid, { name });
+        
         return user;
       })
       .catch((error) => {
@@ -72,5 +81,17 @@ export class AuthService {
         console.error('Error during user creation:', error);
         throw error;
       });
+    }
+
+
+    // Add user data to Firestore
+    private async addUserDataToFirestore(uid: string, data: { name: string }): Promise<void> {
+      try {
+        const userDocRef = doc(this.db, 'users', uid);
+        await setDoc(userDocRef, data);
+      } catch (error) {
+        console.error('Error adding user data to Firestore:', error);
+        throw error;
+      }
     }
 }

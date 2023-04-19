@@ -16,8 +16,7 @@ export class RegisterPageComponent {
 @ViewChild('stepper', { static: false }) stepper!: MatStepper;
 
   public isLoading = false;
-
-
+  
 
   constructor(
     private formBuilder: FormBuilder,
@@ -36,14 +35,15 @@ export class RegisterPageComponent {
 
   submitRegisterForm(): void {
     if (this.registerForm.valid) {
+      const name = this.registerForm.get('name')?.value;
       const email = this.registerForm.get('email')?.value;
       const password = this.registerForm.get('password')?.value;
 
-      
-      if (email && password)
+      // Check if the email, password and name are not null
+      if (email && password && name)
       {
         this.isLoading = true;
-        this.authService.createUser(email, password)
+        this.authService.createUser(email, password, name)
         .then((user) => {
           this.isLoading = false;
           console.log('User created:', user);
@@ -76,6 +76,13 @@ export class RegisterPageComponent {
       }
       
     }
+  } // End of submitRegisterForm()
+
+  submitVerifyForm(): void {
+    if (this.stepper.selected) {
+      this.stepper.selected.completed = true;
+    }
+    this.stepper.next();
   }
 
 }

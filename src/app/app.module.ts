@@ -28,10 +28,16 @@ import { MatDividerModule}  from '@angular/material/divider';
 import {MatStepperModule} from '@angular/material/stepper';
 import {MatProgressBarModule } from '@angular/material/progress-bar';
 
+import { MatListModule } from '@angular/material/list';
+
 
 // Import Firebase packages
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+
+// Import AngularFire packages
+import { provideFirebaseApp, getApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
 // Import environment
 import { environment } from './environments/environment';
@@ -65,7 +71,10 @@ const auth = getAuth(app);
     ReactiveFormsModule,
     MatDividerModule,
     MatStepperModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatListModule,
+    //provideFirebaseApp(() => initializeApp(environment.firebase,)), // <-- Initialize Firebase App
+    provideFirestore(() => getFirestore()), // <-- Initialize Firestore
   ],
   providers: [],
   bootstrap: [AppComponent]
