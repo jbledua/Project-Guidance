@@ -20,11 +20,26 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatDividerModule} from '@angular/material/divider';
 
+// Import Firebase packages
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+
+// Import environment
+import { environment } from './environments/environment';
+import { InboxPageComponent } from './pages/inbox-page/inbox-page.component';
+
+// Initialize Firebase
+const app = initializeApp(environment.firebase);
+
+// Initialize Firebase Authentication and get a reference to the service
+const auth = getAuth(app);
+
 @NgModule({
   declarations: [
     AppComponent,
     LoginPageComponent,
     NotfoundPageComponent,
+    InboxPageComponent,
   ],
   imports: [
     BrowserModule,
