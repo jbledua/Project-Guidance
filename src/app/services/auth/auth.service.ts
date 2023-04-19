@@ -4,10 +4,6 @@ import { BehaviorSubject } from 'rxjs'; // Import BehaviorSubject
 
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 
-
-
-
-
 @Injectable({
   providedIn: 'root',
 })

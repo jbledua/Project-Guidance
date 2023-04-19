@@ -41,6 +41,7 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
 // Import environment
 import { environment } from './environments/environment';
+import { NewThreadPageComponent } from './pages/new-thread-page/new-thread-page.component';
 
 
 // Initialize Firebase
@@ -56,6 +57,7 @@ const auth = getAuth(app);
     NotfoundPageComponent,
     InboxPageComponent,
     RegisterPageComponent,
+    NewThreadPageComponent,
   ],
   imports: [
     BrowserModule,
