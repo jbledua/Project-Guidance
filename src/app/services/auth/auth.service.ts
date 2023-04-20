@@ -3,6 +3,7 @@ import { getAuth, signInWithEmailAndPassword,createUserWithEmailAndPassword , Us
 import { BehaviorSubject } from 'rxjs'; // Import BehaviorSubject
 
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { UserService } from '../user/user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,8 @@ export class AuthService {
 
   private db = getFirestore();
 
-  constructor() {
+  // Constructor
+  constructor(private userService: UserService) {
     // Listen for auth state changes
     onAuthStateChanged(this.auth, (user) => {
       if (user) {
@@ -25,7 +27,7 @@ export class AuthService {
         this.authState.next(false);
       }
     });
-  }
+  } // End of constructor
 
   // Login with email and password
   login(email: string, password: string): Promise<User> {
@@ -53,22 +55,23 @@ export class AuthService {
         console.error('Error during logout:', error);
         throw error;
       });
-  }
+  } // End of logout()
 
   // Check if user is logged in
   public get isAuthenticated(): boolean {
     return this.authState.value;
-  }
+  } // End of isAuthenticated()
 
   // Create a new user with email and password
-  createUser(email: string, password: string, name: string): Promise<User> {
+  public createUser(email: string, password: string, name: string): Promise<User> {
     return createUserWithEmailAndPassword(this.auth, email, password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
 
         // Add user's data to Firestore
-        this.addUserDataToFirestore(user.uid, { name });
+        //this.addUserDataToFirestore(user.uid, { name });
+        this.userService.createUser(user.uid, { name });
         
         return user;
       })
@@ -77,17 +80,6 @@ export class AuthService {
         console.error('Error during user creation:', error);
         throw error;
       });
-    }
 
-
-    // Add user data to Firestore
-    private async addUserDataToFirestore(uid: string, data: { name: string }): Promise<void> {
-      try {
-        const userDocRef = doc(this.db, 'users', uid);
-        await setDoc(userDocRef, data);
-      } catch (error) {
-        console.error('Error adding user data to Firestore:', error);
-        throw error;
-      }
-    }
+  } // End of createUser()
 }
