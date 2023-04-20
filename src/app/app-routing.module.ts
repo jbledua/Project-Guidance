@@ -5,6 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { NotfoundPageComponent } from './pages/notfound-page/notfound-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { RegisterPageComponent } from './pages/register-page/register-page.component';
+import { ForgotPageComponent } from './pages/forgot-page/forgot-page.component';
 
 import { InboxPageComponent } from './pages/inbox-page/inbox-page.component';
 import { NewThreadPageComponent } from './pages/new-thread-page/new-thread-page.component';
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'new-thread', component: NewThreadPageComponent,canActivate: [AuthGuard] },
   { path: 'register', component: RegisterPageComponent},
   { path: 'login', component: LoginPageComponent },
+  { path: 'forgot', component: ForgotPageComponent },
   { path: '', redirectTo: '/inbox', pathMatch: 'full' },
   { path: '**', component: NotfoundPageComponent }
 ];
