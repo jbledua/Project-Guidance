@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { AuthService } from './services/auth/auth.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { User } from './models/user.model';
+
+import { MatSidenav } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +15,8 @@ export class AppComponent {
   toolbarTitle = 'Project Guidance';
 
   currentUser: User | null = null;
+
+  @ViewChild('sidenav') sidenav!: MatSidenav;
 
   constructor(
     public auth: AuthService,
@@ -45,6 +49,12 @@ export class AppComponent {
       case '/register':
         this.toolbarTitle = 'Register';
         break;
+      case '/forgot':
+        this.toolbarTitle = 'Forgor Password';
+        break;
+      case '/account':
+        this.toolbarTitle = 'Account Settings';
+        break;
       // Add more cases as needed
       default:
         this.toolbarTitle = 'Project Guidance';
@@ -68,6 +78,6 @@ export class AppComponent {
   }
 
   toggleMenu() {
-    // Implement your menu toggle logic here
+    this.sidenav.toggle();
   }
 }

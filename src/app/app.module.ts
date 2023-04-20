@@ -31,6 +31,7 @@ import {MatStepperModule} from '@angular/material/stepper';
 import {MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 
 // Import Firebase packages
@@ -80,6 +81,7 @@ const auth = getAuth(app);
     MatStepperModule,
     MatProgressBarModule,
     MatListModule,
+    MatSidenavModule,
     //provideFirebaseApp(() => initializeApp(environment.firebase,)), // <-- Initialize Firebase App
     provideFirestore(() => getFirestore()), // <-- Initialize Firestore
   ],
