@@ -6,6 +6,7 @@ import { NotfoundPageComponent } from './pages/notfound-page/notfound-page.compo
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { RegisterPageComponent } from './pages/register-page/register-page.component';
 import { ForgotPageComponent } from './pages/forgot-page/forgot-page.component';
+import { AccountPageComponent } from './pages/account-page/account-page.component';
 
 import { InboxPageComponent } from './pages/inbox-page/inbox-page.component';
 import { NewThreadPageComponent } from './pages/new-thread-page/new-thread-page.component';
@@ -16,6 +17,7 @@ import { AuthGuard } from './guards/auth/auth.guard';
 const routes: Routes = [
   { path: 'inbox', component: InboxPageComponent,canActivate: [AuthGuard]},
   { path: 'new-thread', component: NewThreadPageComponent,canActivate: [AuthGuard] },
+  { path: 'account', component: AccountPageComponent,canActivate: [AuthGuard] },
   { path: 'register', component: RegisterPageComponent},
   { path: 'login', component: LoginPageComponent },
   { path: 'forgot', component: ForgotPageComponent },
