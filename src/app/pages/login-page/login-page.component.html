@@ -13,7 +13,13 @@
                     </mat-form-field>
                     <mat-form-field appearance="fill">
                         <mat-label>Password</mat-label>
-                        <input matInput formControlName="password" type="password" required [disabled]="isLoading"/>
+                        <input matInput formControlName="password" required [disabled]="isLoading" [type]="hidePassword ? 'password' : 'text'"/>
+                        <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+                            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                        <mat-hint align="end">
+                            <a mat-button routerLink="/forgot">Forgot Password?</a>
+                        </mat-hint>
                         <mat-error *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
                             <span *ngIf="loginForm.get('password')?.errors?.['required']">Password is required.</span>
                         </mat-error>

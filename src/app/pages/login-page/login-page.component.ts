@@ -11,7 +11,8 @@ import { Router } from '@angular/router';
 })
 export class LoginPageComponent {
   // Declare a FormGroup variable
-  loginForm: FormGroup; 
+  public loginForm: FormGroup; 
+  public hidePassword = true;
 
   public emailPassInvalid = false; // Flag to show an error message if the user enters the wrong email or password
   public isLoading = false; // Flag to show a spinner while the user is logging in

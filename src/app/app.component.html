@@ -9,6 +9,8 @@
             <mat-icon>account_circle</mat-icon>
         </button>
         <mat-menu #accountMenu="matMenu">
+            <p *ngIf="currentUser" style="padding: 0 16px;">Welcome, {{ currentUser.name }}</p>
+            <mat-divider *ngIf="currentUser"></mat-divider>
             <button mat-menu-item (click)="logout()">
               <mat-icon>exit_to_app</mat-icon>
               <span>Logout</span>

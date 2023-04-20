@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { getAuth, signInWithEmailAndPassword,createUserWithEmailAndPassword , User, signOut, onAuthStateChanged } from 'firebase/auth'; // Import Firebase auth functions and User type
+import { getAuth, signInWithEmailAndPassword,createUserWithEmailAndPassword , User as FirebaseAuthUser, signOut, onAuthStateChanged } from 'firebase/auth'; // Import Firebase auth functions and User type
 import { BehaviorSubject } from 'rxjs'; // Import BehaviorSubject
 
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { UserService } from '../user/user.service';
+
+import { User } from '../../models/user.model'; // <-- Import User model
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +32,7 @@ export class AuthService {
   } // End of constructor
 
   // Login with email and password
-  login(email: string, password: string): Promise<User> {
+  login(email: string, password: string): Promise<FirebaseAuthUser> {
     return signInWithEmailAndPassword(this.auth, email, password)
       .then((userCredential) => {
         // Signed in
@@ -63,14 +65,13 @@ export class AuthService {
   } // End of isAuthenticated()
 
   // Create a new user with email and password
-  public createUser(email: string, password: string, name: string): Promise<User> {
+  public createUser(email: string, password: string, name: string): Promise<FirebaseAuthUser> {
     return createUserWithEmailAndPassword(this.auth, email, password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
 
         // Add user's data to Firestore
-        //this.addUserDataToFirestore(user.uid, { name });
         this.userService.createUser(user.uid, { name });
         
         return user;
@@ -82,4 +83,30 @@ export class AuthService {
       });
 
   } // End of createUser()
+
+  // Get Current User
+  public async getCurrentUser(): Promise<User | null> {
+    return new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(
+        this.auth,
+        async (firebaseUser: FirebaseAuthUser | null) => {
+          unsubscribe();
+          if (firebaseUser) {
+            try {
+              const user = await this.userService.getUser(firebaseUser.uid);
+              resolve(user);
+            } catch (error) {
+              reject(error);
+            }
+          } else {
+            resolve(null);
+          }
+        },
+        (error) => {
+          reject(error);
+        }
+      );
+    });
+  }
+
 }

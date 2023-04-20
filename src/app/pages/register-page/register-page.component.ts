@@ -15,8 +15,8 @@ export class RegisterPageComponent {
 
 @ViewChild('stepper', { static: false }) stepper!: MatStepper;
 
+  public hidePassword = true;
   public isLoading = false;
-  
 
   constructor(
     private formBuilder: FormBuilder,

@@ -10,6 +10,8 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { NotfoundPageComponent } from './pages/notfound-page/notfound-page.component';
 import { InboxPageComponent } from './pages/inbox-page/inbox-page.component';
 import { RegisterPageComponent } from './pages/register-page/register-page.component';
+import { NewThreadPageComponent } from './pages/new-thread-page/new-thread-page.component';
+import { ForgotPageComponent } from './pages/forgot-page/forgot-page.component';
 
 // Import ReactiveFormsModule for using FormBuilder
 import { ReactiveFormsModule } from '@angular/forms';
@@ -41,7 +43,7 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
 // Import environment
 import { environment } from './environments/environment';
-import { NewThreadPageComponent } from './pages/new-thread-page/new-thread-page.component';
+
 
 
 // Initialize Firebase
@@ -58,6 +60,7 @@ const auth = getAuth(app);
     InboxPageComponent,
     RegisterPageComponent,
     NewThreadPageComponent,
+    ForgotPageComponent,
   ],
   imports: [
     BrowserModule,

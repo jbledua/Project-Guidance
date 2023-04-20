@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from './services/auth/auth.service';
 import { Router, NavigationEnd } from '@angular/router';
+import { User } from './models/user.model';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +12,8 @@ export class AppComponent {
   title = 'Project-Guidance';
   toolbarTitle = 'Project Guidance';
 
+  currentUser: User | null = null;
+
   constructor(
     public auth: AuthService,
     private router: Router
@@ -20,6 +23,13 @@ export class AppComponent {
       if (event instanceof NavigationEnd) {
         this.updateToolbarTitle(event.url);
       }
+    });
+
+    // Get the current user
+    this.auth.getCurrentUser().then((user) => {
+      this.currentUser = user;
+    }).catch((error) => {
+      console.error('Error getting current user:', error);
     });
   }
 

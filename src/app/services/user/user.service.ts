@@ -1,6 +1,6 @@
 // src/app/services/user/user.service.ts
 import { Injectable } from '@angular/core';
-import { getFirestore, doc, setDoc, collection, query, getDocs } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDoc, collection, query, getDocs } from 'firebase/firestore';
 import { Observable, from } from 'rxjs';
 import { User } from '../../models/user.model';
 
@@ -25,30 +25,22 @@ export class UserService {
     }
   }
 
-//   async getCurrentUser(): Promise<User | null> {
-//     const loggedInUser = this.authService.currentUser;
-
-//     if (!loggedInUser) {
-//       return null;
-//     }
-
-//     try {
-//       const userDocRef = doc(this.db, 'users', loggedInUser.uid);
-//       const userDoc = await getDoc(userDocRef);
-
-//       if (userDoc.exists()) {
-//         const userData = userDoc.data();
-//         return new User(loggedInUser.uid, userData['name'], userData['email']);
-//       } else {
-//         return null;
-//       }
-//     } catch (error) {
-//       console.error('Error getting current user data from Firestore:', error);
-//       throw error;
-//     }
-//   }
-
-// }
+  // Get a user from Firestore by uid
+  public async getUser(uid: string): Promise<User | null> {
+    try {
+      const userDocRef = doc(this.db, 'users', uid);
+      const userSnapshot = await getDoc(userDocRef);
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.data();
+        return new User(uid, userData['name'], userData['email']);
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error('Error getting user data from Firestore:', error);
+      throw error;
+    }
+  }
 
   getUsers(): Observable<User[]> {
     const userCollectionQuery = query(collection(this.db, 'users'));
