@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { addDoc, collection, serverTimestamp, getFirestore  } from 'firebase/firestore';
+import { getFirestore, addDoc, collection, serverTimestamp, query, where, getDocs  } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+
 import { Message } from '../../models/message.model';
 import { Thread } from '../../models/thread.model';
 
@@ -10,48 +10,34 @@ import { Thread } from '../../models/thread.model';
 })
 export class MessageService {
 
-  constructor(private firestore: AngularFirestore) { }
+  // Create a Firestore reference
+  private db = getFirestore();
 
-  // Function to store a message in Firestore
-  async storeMessage(threadId: string, message: Message): Promise<void> {
+  constructor() { }
+
+  // Get threads for a specific user
+  public async getThreadsForUser(uid: string): Promise<Thread[]> {
     try {
-      // Add the message to the messages collection with the specified threadId
-      await this.firestore.collection('messages').add({
-        threadId: threadId,
-        senderId: message.senderId,
-        content: message.content,
-        createdAt: message.timestamp,
+      const threadsRef = collection(this.db, 'threads');
+      const threadsQuery = query(threadsRef, where('members', 'array-contains', uid));
+      const threadSnapshot = await getDocs(threadsQuery);
+  
+      const threads: Thread[] = [];
+      threadSnapshot.forEach((doc) => {
+        const data = doc.data();
+        threads.push({
+          id: doc.id,
+          subject: data['subject'],
+          members: data['members'],
+          createdAt: data['createdAt'].toDate(),
+        });
       });
+  
+      return threads;
     } catch (error) {
-      console.error('Error storing message:', error);
+      console.error('Error getting threads for user:', error);
       throw error;
     }
   }
 
-  // Function to create a new thread in Firestore
-  public async createThread(members: string[], subject?: string): Promise<string> {
-    const db = getFirestore();
-    const auth = getAuth();
-  
-    // If the subject is not provided, concatenate member names as the subject.
-    if (!subject) {
-      subject = members.join(', ');
-    }
-  
-    // Create a new thread object
-    const newThread = {
-      subject: subject,
-      members: members,
-      createdAt: serverTimestamp(),
-    };
-  
-    try {
-      // Add the new thread to the 'threads' collection
-      const docRef = await addDoc(collection(db, 'threads'), newThread);
-      return docRef.id; // Return the new thread ID
-    } catch (error) {
-      console.error('Error creating the thread:', error);
-      throw error;
-    }
-  }
 }

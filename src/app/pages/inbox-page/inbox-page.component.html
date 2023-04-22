@@ -2,11 +2,11 @@
     <div class="inbox-container">
         <h1>Active Messages</h1>
         <mat-list>
-            <div *ngFor="let message of messages">
+            <div *ngFor="let thread of threads">
                 <mat-list-item>
-                    <!-- Customize the message content as needed -->
-                    <span  matListItemTitle>{{ message.title }}</span >
-                    <span  matListItemLine>{{ message.content }}</span >    
+                    <!-- Customize the thread content as needed -->
+                    <span matListItemTitle>{{ thread.subject || 'No Subject' }}</span>
+                    <span matListItemLine *ngIf="thread.createdAt">Created: {{ thread.createdAt | date}}</span>    
                 </mat-list-item>
                 <mat-divider></mat-divider>
             </div>

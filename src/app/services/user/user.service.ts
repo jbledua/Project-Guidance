@@ -1,15 +1,14 @@
-// src/app/services/user/user.service.ts
 import { Injectable } from '@angular/core';
 import { getFirestore, doc, setDoc, getDoc, collection, query, getDocs } from 'firebase/firestore';
 import { Observable, from } from 'rxjs';
 import { User } from '../../models/user.model';
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
+  // Create a Firestore reference
   private db = getFirestore();
 
   constructor() { }
@@ -23,7 +22,7 @@ export class UserService {
       console.error('Error adding user data to Firestore:', error);
       throw error;
     }
-  }
+  } // End of createUser()
 
   // Get a user from Firestore by uid
   public async getUser(uid: string): Promise<User | null> {
@@ -40,23 +39,6 @@ export class UserService {
       console.error('Error getting user data from Firestore:', error);
       throw error;
     }
-  }
-
-  getUsers(): Observable<User[]> {
-    const userCollectionQuery = query(collection(this.db, 'users'));
-
-    return from(
-      getDocs(userCollectionQuery).then((querySnapshot) => {
-        const users: User[] = [];
-        querySnapshot.forEach((doc) => {
-          const userData = doc.data();
-          const user = new User(doc.id, userData['name'], userData['email']);
-          users.push(user);
-        });
-        return users;
-      })
-    );
-  } // End of getUsers()
-
+  } // End of getUser()
 
 }

@@ -45,6 +45,7 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 // Import environment
 import { environment } from './environments/environment';
 import { AccountPageComponent } from './pages/account-page/account-page.component';
+import { ThreadPageComponent } from './pages/thread-page/thread-page.component';
 
 
 
@@ -64,6 +65,7 @@ const auth = getAuth(app);
     NewThreadPageComponent,
     ForgotPageComponent,
     AccountPageComponent,
+    ThreadPageComponent,
   ],
   imports: [
     BrowserModule,
