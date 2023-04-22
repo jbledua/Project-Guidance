@@ -3,5 +3,6 @@ export interface Message {
     content: string;
     senderId: string;
     recipientId: string;
+    threadId: string;
     timestamp: Date;
   }
