@@ -10,15 +10,18 @@ import { Thread } from '../../models/thread.model';
 })
 export class InboxPageComponent implements OnInit {
   threads: Thread[] = [];
+  public isLoading = false;
 
   constructor(private messageService: MessageService, private authService: AuthService) {}
 
   async ngOnInit(): Promise<void> {
+    this.isLoading = true;
     const currentUser = await this.authService.getCurrentUser();
 
     //console.log('Current user ID:', currentUser?.id);
     if (currentUser) {
       this.threads = await this.messageService.getThreadsForUser(currentUser.id);
+      this.isLoading = false;
       //console.log('Threads:', this.threads);
     }
   }

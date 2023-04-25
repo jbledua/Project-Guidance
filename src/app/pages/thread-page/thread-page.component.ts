@@ -6,6 +6,8 @@ import { MessageService } from 'src/app/services/message/message.service';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
+import { AuthService } from 'src/app/services/auth/auth.service';
+
 @Component({
   selector: 'app-thread-page',
   templateUrl: './thread-page.component.html',
@@ -20,11 +22,29 @@ export class ThreadPageComponent implements OnInit {
     content: ['', Validators.required]
   })
 
+  public messageClasses: string[] = [];
+
   constructor(
+    private authService: AuthService,
     private messageService: MessageService,
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {}
+
+  async isReceivedMessage(message: Message): Promise<boolean> {
+    const currentUser = await this.authService.getCurrentUser();
+    return message.senderId !== currentUser?.id;
+  }
+
+  async loadMessages(): Promise<void> {
+    this.messages = await this.messageService.getMessagesForThread(this.threadId);
+    for (const message of this.messages) {
+      const isReceived = await this.isReceivedMessage(message);
+      this.messageClasses.push(isReceived ? 'received' : 'sent');
+    }
+  }
+  
+  
 
   async ngOnInit(): Promise<void> {
     this.threadId = this.route.snapshot.paramMap.get('id')!;

@@ -1,30 +1,23 @@
 <div class="center-container">
+  <div class="content-container">
     <div class="thread-container">
-      <h1>{{ thread?.subject || 'No Subject' }}</h1>
-      <h2 *ngIf="thread?.createdAt">Created: {{ thread?.createdAt | date }}</h2>
-      <mat-list>
-        <div *ngFor="let message of messages">
-          <mat-list-item>
-            <div class="message-content">
-              <span matListItemTitle>{{ message.content }}</span>
-              <span matListItemLine>{{ message.timestamp | date: 'short' }}</span>
-              <span matListItemLine *ngIf="message.senderId">Sent by: {{ message.senderId }}</span>
-            </div>
-          </mat-list-item>
-          <mat-divider></mat-divider>
+      <div class="messages-container">
+        <div *ngFor="let message of messages; let i = index" [ngClass]="messageClasses[i]">
+          <div class="message-bubble">
+            {{ message.content }}
+          </div>
         </div>
-      </mat-list>
-    </div>
-  
-    <div class="message-input">
-        <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
-          <mat-form-field>
-            <input matInput formControlName="content" placeholder="Type your message...">
-          </mat-form-field>
-          <button mat-fab color="primary" type="submit" [disabled]="messageForm.invalid">
-            <mat-icon>send</mat-icon>
-          </button>
-        </form>
       </div>
+    </div>
+    <div class="message-input">
+      <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
+        <mat-form-field>
+          <input matInput formControlName="content" placeholder="Type your message...">
+        </mat-form-field>
+        <button mat-fab color="primary" type="submit" [disabled]="messageForm.invalid">
+          <mat-icon>send</mat-icon>
+        </button>
+      </form>
+    </div>
   </div>
-  
+</div>
