@@ -17,17 +17,27 @@ export class InboxPageComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.isLoading = true;
     const currentUser = await this.authService.getCurrentUser();
-
-    //console.log('Current user ID:', currentUser?.id);
+  
     if (currentUser) {
+      // Get the threads for the current user
       this.threads = await this.messageService.getThreadsForUser(currentUser.id);
+
+      // Set the loading state to false
       this.isLoading = false;
-      //console.log('Threads:', this.threads);
     }
   }
 
+  // This method is used to create a new message
   createNewMessage(): void {
     // Your logic for creating a new message, e.g., navigate to a new message form
     console.log('Creating a new message');
+  }
+
+  // This method is used to shorten the message content to a maximum length
+  shortenMessage(message: string, maxLength: number): string {
+    if (message.length <= maxLength) {
+      return message;
+    }
+    return message.substring(0, maxLength -  3) + '...';
   }
 }

@@ -7,6 +7,15 @@
   width: 100%;
 }
 
+.mat-mdc-list-item-icon {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.example-header-image {
+  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-size: cover;
+}
+
 .inbox-container {
   width: 100%;
   max-width: 1000px; // Adjust this value for the maximum width on desktop screens
@@ -17,12 +26,6 @@
 
 mat-list {
   width: 100%;
-}
-
-a {
-  width: 100%;
-  text-decoration: none;
-  color: inherit;
 }
 
 mat-list-item {

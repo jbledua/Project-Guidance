@@ -2,16 +2,24 @@
     <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
     <div class="inbox-container">
         <mat-list>
-            <div *ngFor="let thread of threads">
-                <mat-list-item [routerLink]="['/thread', thread.id]">
-                    <mat-icon matListAvatar>person</mat-icon>
-                    <span matListItemTitle>{{ thread.subject || 'No Subject' }}</span>
-                    <span matListItemLine *ngIf="thread.createdAt">Created: {{ thread.createdAt | date}}</span>
-                </mat-list-item>
+            <mat-list-item *ngFor="let thread of threads" [routerLink]="['/thread', thread.id]">
+                <!-- Private Message -->
+                <mat-icon matListItemIcon *ngIf="thread.members.length <= 2">person</mat-icon>
+
+                <!-- Group Message -->
+                <mat-icon matListItemIcon *ngIf="thread.members.length > 2">group</mat-icon>
+                
+                <span matListItemTitle>{{ thread.subject || 'No Subject' }}</span>
+                <span matListItemLine *ngIf="thread.lastMessage">{{ shortenMessage(thread.lastMessage, 50) }}</span>
+
+                <!-- Created At
+                  <span matListItemLine *ngIf="thread.createdAt">Created: {{ thread.createdAt | date}}</span>
+                -->
                 <mat-divider></mat-divider>
-            </div>
+            </mat-list-item>
         </mat-list>
       </div>
+      
       <button mat-fab class="create-message-button" color="primary" routerLink="/new-thread">
         <mat-icon>add</mat-icon>
       </button>
