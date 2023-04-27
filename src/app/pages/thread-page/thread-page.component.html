@@ -3,12 +3,14 @@
   <div class="content-container">
     <mat-card class="message-card" *ngFor="let message of messages">
       <mat-card-header>
-        <mat-card-title>{{ message.senderId }}</mat-card-title>
-        <mat-card-subtitle>{{ message.timestamp | date:'medium' }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ message.senderId }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <p>{{ message.content }}</p>
       </mat-card-content>
+      <mat-card-footer class="footer">
+        <span class="timestamp">{{ message.timestamp | date:'shortTime' }}</span>
+      </mat-card-footer>
     </mat-card>
   </div>
 </div>

@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs'; // Import BehaviorSubject
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { UserService } from '../user/user.service';
 
-import { User } from '../../models/user.model'; // <-- Import User model
+import { User } from '../../models/user.model'; 
 
 @Injectable({
   providedIn: 'root',
@@ -17,11 +17,11 @@ export class AuthService {
 
   private db = getFirestore();
 
-  // Constructor
-  constructor(private userService: UserService) {
+   // Constructor
+   constructor(private userService: UserService) {
     // Listen for auth state changes
-    onAuthStateChanged(this.auth, (user) => {
-      if (user) {
+    onAuthStateChanged(this.auth, (firebaseUser: FirebaseAuthUser | null) => {
+      if (firebaseUser) {
         // User is signed in
         this.authState.next(true);
       } else {
@@ -30,6 +30,30 @@ export class AuthService {
       }
     });
   } // End of constructor
+
+  public onAuthStateChanged(): Promise<User | null> {
+    return new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(
+        this.auth,
+        async (firebaseUser: FirebaseAuthUser | null) => {
+          unsubscribe();
+          if (firebaseUser) {
+            try {
+              const user = await this.userService.getUser(firebaseUser.uid);
+              resolve(user);
+            } catch (error) {
+              reject(error);
+            }
+          } else {
+            resolve(null);
+          }
+        },
+        (error) => {
+          reject(error);
+        }
+      );
+    });
+  }
 
   // Login with email and password
   login(email: string, password: string): Promise<FirebaseAuthUser> {
