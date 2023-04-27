@@ -96,6 +96,7 @@ export class MessageService {
           id: doc.id,
           content: data['content'],
           senderId: data['senderId'],
+          senderName: data['senderName'], // Add this line
           recipientId: data['recipientId'],
           threadId: data['threadId'],
           timestamp: data['timestamp'].toDate(),
@@ -130,6 +131,7 @@ export class MessageService {
           id: doc.id,
           content: data['content'],
           senderId: data['senderId'],
+          senderName: data['senderName'], // Add this line
           recipientId: data['recipientId'],
           threadId: data['threadId'],
           timestamp: data['timestamp'].toDate(),
@@ -156,6 +158,7 @@ export class MessageService {
         const newMessageRef = await addDoc(collection(this.db, 'messages'), {
           content: message.content,
           senderId: message.senderId,
+          senderName: message.senderName, // Add this line
           threadId: message.threadId,
           timestamp: serverTimestamp()
         });
@@ -186,6 +189,7 @@ export class MessageService {
           id: doc.id,
           content: data['content'],
           senderId: data['senderId'],
+          senderName: data['senderName'], // Add this line
           recipientId: data['recipientId'],
           threadId: data['threadId'],
           timestamp: data['timestamp'].toDate(),

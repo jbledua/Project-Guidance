@@ -72,26 +72,35 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
 
   }
 
-  // Send a message
+  
+
   async sendMessage(): Promise<void> {
     if (this.messageForm.valid) {
-
+  
       console.log('Sending message:', this.messageForm.value);
-
+  
       const currentUser = await this.authService.getCurrentUser();
-
+  
       if (!currentUser) {
         console.error('No current user');
         return;
       }
-
+  
+      const userDetails: User | null = await this.userService.getUser(currentUser.id);
+  
+      if (!userDetails) {
+        console.error('No user details found');
+        return;
+      }
+  
       const message: Message = {
         content: this.messageForm.value.content,
         senderId: currentUser.id,
+        senderName: 'Me', // Add this line
         threadId: this.threadId,
         // recipientId is not needed in this function, but it may be necessary elsewhere in your code
       };
-
+  
       try {
         await this.messageService.addMessageToThread(message);
         console.log('Message sent successfully');
@@ -103,6 +112,7 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
       
     }
   } // End of sendMessage()
+  
 
   ngOnDestroy(): void {
     if (this.unsubscribeFromNewMessages) {

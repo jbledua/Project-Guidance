@@ -3,7 +3,7 @@
   <div class="content-container">
     <mat-card class="message-card" *ngFor="let message of messages">
       <mat-card-header>
-        <mat-card-subtitle>{{ message.senderId }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ message.senderName }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <p>{{ message.content }}</p>
