@@ -3,6 +3,7 @@ export interface Thread {
     subject?: string;
     members: string[];
     createdAt: Date;
+    lastMessage?: string;
   }
   
   

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { getFirestore, addDoc, collection, serverTimestamp, query, where, getDocs, doc, getDoc, orderBy  } from 'firebase/firestore';
+import { getFirestore, addDoc, collection, serverTimestamp, query, where, getDocs, doc, getDoc, orderBy, limit  } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 import { Message } from '../../models/message.model';
 import { Thread } from '../../models/thread.model';
+import { User } from '../../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,15 +22,21 @@ export class MessageService {
       const threadsRef = collection(this.db, 'threads');
       const threadsQuery = query(threadsRef, where('members', 'array-contains', uid));
       const threadSnapshot = await getDocs(threadsQuery);
+      const _lastMessage = "";
+      
   
       const threads: Thread[] = [];
       threadSnapshot.forEach((doc) => {
         const data = doc.data();
+        //const _lastMessage = await this.getLastMessageForThread(doc.id)?.content;
+       
+
         threads.push({
           id: doc.id,
           subject: data['subject'],
           members: data['members'],
           createdAt: data['createdAt'].toDate(),
+          lastMessage: _lastMessage,
         });
       });
   
@@ -47,12 +54,21 @@ export class MessageService {
       const threadSnapshot = await getDoc(threadDocRef);
       if (threadSnapshot.exists()) {
         const threadData = threadSnapshot.data();
+
+        const lastMessage = await this.getLastMessageForThread(threadId);
+
         if (threadData) {
 
           // Convert the Firestore Timestamp to a Date object
           const createdAt = threadData['createdAt'].toDate();
           
-          return { id: threadSnapshot.id, subject: threadData['subject'], members: threadData['members'], createdAt };
+          return { 
+            id: threadSnapshot.id, 
+            subject: threadData['subject'], 
+            members: threadData['members'], 
+            createdAt,
+            lastMessage: lastMessage?.content || ""
+          };
         }
       }
       return null;
@@ -61,6 +77,41 @@ export class MessageService {
       throw error;
     }
   } // End of getThread()
+
+  public async getLastMessageForThread(threadId: string): Promise<Message | null> {
+    try {
+      const messagesRef = collection(this.db, 'messages');
+  
+      const messagesQuery = query(
+        messagesRef,
+        where('threadId', '==', threadId),
+        orderBy('timestamp', 'desc'),
+        limit(1)
+      );
+  
+      const messagesSnapshot = await getDocs(messagesQuery);
+  
+      if (!messagesSnapshot.empty) {
+        const doc = messagesSnapshot.docs[0];
+        const data = doc.data();
+        const message: Message = {
+          id: doc.id,
+          content: data['content'],
+          senderId: data['senderId'],
+          recipientId: data['recipientId'],
+          threadId: data['threadId'],
+          timestamp: data['timestamp'].toDate(),
+        };
+        return message;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error getting last message for thread:', error);
+      throw error;
+    }
+  }
+  
+
 
   // Get messages for a specific thread
   public async getMessagesForThread(threadId: string): Promise<Message[]> {
@@ -99,7 +150,9 @@ export class MessageService {
       console.error('Error getting messages for thread:', error);
       throw error;
     }
-  }
+  } // End of getMessagesForThread()
+
+
 
 
 }
