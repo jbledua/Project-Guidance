@@ -1,27 +1,28 @@
 <div class="center-container">
   <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
   <div class="content-container">
-    <div class="thread-container">
-      <div class="messages-container">
-        <div *ngFor="let message of messages; let i = index" [ngClass]="messageClasses[i]">
-          <div class="message-bubble">
-            {{ message.content }}
-          </div>
-        </div>
-      </div>
-    </div>
-    <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
-      <mat-toolbar class="message-toolbar">
-        <span class="spacer"></span>
-        
-        <mat-form-field class="message-input-field">
-          <input matInput formControlName="content" placeholder="Type your message...">
-          <button matSuffix mat-icon-button color="primary" type="submit" [hidden]="messageForm.invalid">
-            <mat-icon>send</mat-icon>
-          </button>
-        </mat-form-field> 
-        
-        <span class="spacer"></span>
-      </mat-toolbar>
-    </form>
+    <mat-card class="message-card" *ngFor="let message of messages">
+      <mat-card-header>
+        <mat-card-title>{{ message.senderId }}</mat-card-title>
+        <mat-card-subtitle>{{ message.timestamp | date:'medium' }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ message.content }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>
+  <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
+    <mat-toolbar class="message-toolbar">
+      <span class="spacer"></span>
+      
+      <mat-form-field class="message-input-field">
+        <input matInput formControlName="content" placeholder="Type your message...">
+        <button matSuffix mat-icon-button color="primary" type="submit" [hidden]="messageForm.invalid">
+          <mat-icon>send</mat-icon>
+        </button>
+      </mat-form-field> 
+      
+      <span class="spacer"></span>
+    </mat-toolbar>
+  </form>

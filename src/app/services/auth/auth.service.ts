@@ -107,6 +107,6 @@ export class AuthService {
         }
       );
     });
-  }
+  } // End of getCurrentUser()
 
 }

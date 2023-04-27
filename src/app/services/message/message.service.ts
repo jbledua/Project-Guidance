@@ -107,9 +107,8 @@ export class MessageService {
       console.error('Error getting last message for thread:', error);
       throw error;
     }
-  }
+  } // End of getLastMessageForThread()
   
-
 
   // Get messages for a specific thread
   public async getMessagesForThread(threadId: string): Promise<Message[]> {
@@ -123,8 +122,6 @@ export class MessageService {
       );
 
       const messagesSnapshot = await getDocs(messagesQuery);
-
-
 
       const messages: Message[] = [];
       messagesSnapshot.forEach((doc) => {
@@ -148,6 +145,28 @@ export class MessageService {
   } // End of getMessagesForThread()
 
 
-
-
+  // Get a specific user by ID
+  public async addMessageToThread(message: Message): Promise<void> {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      
+      if (user) {
+        // Add a new document with a generated ID
+        const newMessageRef = await addDoc(collection(this.db, 'messages'), {
+          content: message.content,
+          senderId: message.senderId,
+          threadId: message.threadId,
+          timestamp: serverTimestamp()
+        });
+        console.log("New message added with ID: ", newMessageRef.id);
+      } else {
+        throw new Error("No user is signed in");
+      }
+    } catch (error) {
+      console.error("Error adding message: ", error);
+      throw error;
+    }
+  } // End of addMessageToThread()
+  
 }

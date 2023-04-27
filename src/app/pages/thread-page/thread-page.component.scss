@@ -66,14 +66,18 @@
   
 }
 
-// .message-input-text {
-//   height: auto;
-//    overflow: hidden;
-//   resize: both;
-//   min-height: 40px;
-//   line-height: 20px;
-// }
+.message-input-text {
+  height: auto;
+   overflow: hidden;
+  resize: both;
+  min-height: 40px;
+  line-height: 20px;
+}
 
+.message-card
+{
+  margin: 8px;
+}
 
 .message-toolbar
 {
