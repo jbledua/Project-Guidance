@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { getFirestore, addDoc, collection, serverTimestamp, query, where, getDocs, doc, getDoc, orderBy, limit  } from 'firebase/firestore';
+import { getFirestore, addDoc, collection, serverTimestamp, query, where, getDocs, doc, getDoc, orderBy, limit ,onSnapshot } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 import { Message } from '../../models/message.model';
@@ -168,5 +168,32 @@ export class MessageService {
       throw error;
     }
   } // End of addMessageToThread()
+
+  // Listen for new messages in a specific thread
+  public listenForNewMessages(threadId: string, callback: (messages: Message[]) => void): () => void {
+    const messagesRef = collection(this.db, 'messages');
+    const messagesQuery = query(
+      messagesRef,
+      where('threadId', '==', threadId),
+      orderBy('timestamp', 'asc')
+    );
+
+    return onSnapshot(messagesQuery, async (snapshot) => {
+      const messages: Message[] = [];
+      snapshot.docs.forEach((doc) => {
+        const data = doc.data();
+        const message: Message = {
+          id: doc.id,
+          content: data['content'],
+          senderId: data['senderId'],
+          recipientId: data['recipientId'],
+          threadId: data['threadId'],
+          timestamp: data['timestamp'].toDate(),
+        };
+        messages.push(message);
+      });
+      callback(messages);
+    });
+  } // End of listenForNewMessages()
   
 }

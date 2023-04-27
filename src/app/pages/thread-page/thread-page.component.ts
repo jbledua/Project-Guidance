@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Thread } from 'src/app/models/thread.model';
 
@@ -17,7 +17,7 @@ import { User } from 'src/app/models/user.model';
   templateUrl: './thread-page.component.html',
   styleUrls: ['./thread-page.component.scss']
 })
-export class ThreadPageComponent implements OnInit {
+export class ThreadPageComponent implements OnInit, OnDestroy  {
 
   public isLoading = false;
   public threadId: string = '';
@@ -26,6 +26,8 @@ export class ThreadPageComponent implements OnInit {
   public messageForm: FormGroup = this.fb.group({
     content: ['', Validators.required]
   });
+
+  private unsubscribeFromNewMessages?: () => void;
 
   constructor(
     private authService: AuthService,
@@ -64,6 +66,10 @@ export class ThreadPageComponent implements OnInit {
     // Display the messages (for testing purposes)
     //console.log('messages:', this.messages);
 
+    this.unsubscribeFromNewMessages = this.messageService.listenForNewMessages(this.threadId, (messages) => {
+      this.messages = messages;
+    });
+
   }
 
   // Send a message
@@ -95,6 +101,12 @@ export class ThreadPageComponent implements OnInit {
         console.error('Error sending message:', error);
       }
       
+    }
+  } // End of sendMessage()
+
+  ngOnDestroy(): void {
+    if (this.unsubscribeFromNewMessages) {
+      this.unsubscribeFromNewMessages();
     }
   }
 
