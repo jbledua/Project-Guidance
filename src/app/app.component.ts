@@ -13,6 +13,10 @@ import { MatSidenav } from '@angular/material/sidenav';
 export class AppComponent {
   title = 'Project-Guidance';
   toolbarTitle = 'Project Guidance';
+  isMenuOpen = false;  // Add this line
+
+  // Add this new property
+  showBackButton = true;
 
   currentUser: User | null = null;
 
@@ -26,6 +30,10 @@ export class AppComponent {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.updateToolbarTitle(event.url);
+
+      // Set showBackButton to true when on /thread or /account, false otherwise
+      this.showBackButton = ['/account'].includes(event.url) || event.url.startsWith('/thread');
+    
       }
     });
 
@@ -61,6 +69,11 @@ export class AppComponent {
     }
   }
 
+  // Add this new method
+  goBack(): void {
+    this.router.navigate(['/inbox']); // replace '/inbox' with the appropriate page
+  }
+
   public isLoggedIn(): boolean {
     return this.auth.isAuthenticated;
   }
@@ -78,6 +91,7 @@ export class AppComponent {
   }
 
   toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
     this.sidenav.toggle();
   }
 }

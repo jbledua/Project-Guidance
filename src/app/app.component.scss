@@ -2,3 +2,13 @@
     flex: 1 1 auto;
     padding: 0px;
   }
+
+.toolbar {
+  position: fixed;
+  z-index: 1000;
+  width: 100%;
+}
+
+.toolbar-spacer {
+  height: 64px;
+}
