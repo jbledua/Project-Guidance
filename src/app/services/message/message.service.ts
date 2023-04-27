@@ -124,11 +124,10 @@ export class MessageService {
 
       const messagesSnapshot = await getDocs(messagesQuery);
 
-      console.log('querySnapshot:', messagesSnapshot); // Add this line
+
 
       const messages: Message[] = [];
       messagesSnapshot.forEach((doc) => {
-        console.log('doc:', doc); // Add this line
         const data = doc.data();
         const message: Message = {
           id: doc.id,
@@ -140,8 +139,6 @@ export class MessageService {
         };
         messages.push(message);
       });
-
-      console.log('messages:', messages); // Add this line
 
       return messages;
     } catch (error) {

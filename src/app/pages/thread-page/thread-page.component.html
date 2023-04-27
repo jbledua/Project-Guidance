@@ -1,4 +1,5 @@
 <div class="center-container">
+  <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
   <div class="content-container">
     <div class="thread-container">
       <div class="messages-container">
@@ -9,15 +10,18 @@
         </div>
       </div>
     </div>
-    <div class="message-input">
-      <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
-        <mat-form-field>
+    <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
+      <mat-toolbar class="message-toolbar">
+        <span class="spacer"></span>
+        
+        <mat-form-field class="message-input-field">
           <input matInput formControlName="content" placeholder="Type your message...">
-        </mat-form-field>
-        <button mat-fab color="primary" type="submit" [disabled]="messageForm.invalid">
-          <mat-icon>send</mat-icon>
-        </button>
-      </form>
-    </div>
-  </div>
+          <button matSuffix mat-icon-button color="primary" type="submit" [hidden]="messageForm.invalid">
+            <mat-icon>send</mat-icon>
+          </button>
+        </mat-form-field> 
+        
+        <span class="spacer"></span>
+      </mat-toolbar>
+    </form>
 </div>

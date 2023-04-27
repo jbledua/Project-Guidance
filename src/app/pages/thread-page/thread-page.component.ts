@@ -15,6 +15,7 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 })
 export class ThreadPageComponent implements OnInit {
 
+  public isLoading = false;
   public threadId: string = '';
   public thread: Thread | null = null;
   public messages: Message[] = [];
@@ -47,24 +48,19 @@ export class ThreadPageComponent implements OnInit {
   
 
   async ngOnInit(): Promise<void> {
+    this.isLoading = true;
     this.threadId = this.route.snapshot.paramMap.get('id')!;
     console.log('threadId:', this.threadId); 
 
     this.thread = await this.messageService.getThread(this.threadId);
     this.messages = await this.messageService.getMessagesForThread(this.threadId);
   
-    //console.log('Thread:', this.thread);
-    //console.log('Messages:', this.messages);
-    // this.messageForm = this.fb.group({
-    //   content: ['', Validators.required]
-    // });
+    this.isLoading = false;
+
   }
 
   sendMessage(): void {
     if (this.messageForm.valid) {
-      //const messageContent = this.messageForm?.get('content').value;
-      // Your logic to send the message
-      //console.log('Sending message:', messageContent);
 
       console.log('Sending message:', this.messageForm.value);
   
