@@ -3,4 +3,12 @@
     justify-items: center;
     align-items: center;
     min-height: calc(100vh - 64px);
+    padding: 20px; // Add padding to the container, which effectively gives margin to the child mat-card
+
+    mat-card {
+      width: 100%; // This makes the card responsive, it will take up all available space
+      max-width: 600px; // This prevents the card from getting too wide on large screens
+      margin: auto; // This will center the card on smaller screens
+      padding: 20px; // This will add space inside the card, around the content
+    }
 }

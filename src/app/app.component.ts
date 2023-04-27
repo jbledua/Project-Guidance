@@ -50,7 +50,7 @@ export class AppComponent {
         this.toolbarTitle = 'Register';
         break;
       case '/forgot':
-        this.toolbarTitle = 'Forgor Password';
+        this.toolbarTitle = 'Forgot Password';
         break;
       case '/account':
         this.toolbarTitle = 'Account Settings';
