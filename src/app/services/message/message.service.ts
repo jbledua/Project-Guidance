@@ -22,23 +22,21 @@ export class MessageService {
       const threadsRef = collection(this.db, 'threads');
       const threadsQuery = query(threadsRef, where('members', 'array-contains', uid));
       const threadSnapshot = await getDocs(threadsQuery);
-      const _lastMessage = "";
-      
   
       const threads: Thread[] = [];
-      threadSnapshot.forEach((doc) => {
+      for (const doc of threadSnapshot.docs) {
         const data = doc.data();
-        //const _lastMessage = await this.getLastMessageForThread(doc.id)?.content;
-       
-
+        const lastMessageData = await this.getLastMessageForThread(doc.id);
+        const lastMessage = lastMessageData ? lastMessageData.content : "";
+  
         threads.push({
           id: doc.id,
           subject: data['subject'],
           members: data['members'],
           createdAt: data['createdAt'].toDate(),
-          lastMessage: _lastMessage,
+          lastMessage: lastMessage,
         });
-      });
+      }
   
       return threads;
     } catch (error) {
