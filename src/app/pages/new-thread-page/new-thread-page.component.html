@@ -12,11 +12,8 @@
               <input matInput formControlName="subject" type="text" />
             </mat-form-field>
             <mat-form-field appearance="fill">
-              <mat-label>Members (comma-separated emails)</mat-label>
-              <textarea matInput formControlName="members" required></textarea>
-              <mat-error *ngIf="newThreadForm.get('members')?.invalid && newThreadForm.get('members')?.touched">
-                <span *ngIf="newThreadForm.get('members')?.errors?.['required']">Members are required.</span>
-              </mat-error>
+              <mat-label>Members </mat-label>
+              <input matInput formControlName="members" required/>
             </mat-form-field>
         </mat-card-content>
         <mat-card-actions>
