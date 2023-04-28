@@ -200,4 +200,20 @@ export class MessageService {
     });
   } // End of listenForNewMessages()
   
+  // Create a new thread
+  public async createThread(thread: Omit<Thread, 'id'>): Promise<string> {
+    try {
+      // Add a new document with a generated ID
+      const newThreadRef = await addDoc(collection(this.db, 'threads'), {
+        ...thread,
+        createdAt: serverTimestamp()
+      });
+      console.log("New thread created with ID: ", newThreadRef.id);
+      return newThreadRef.id;
+    } catch (error) {
+      console.error("Error creating thread: ", error);
+      throw error;
+    }
+  } // End of createThread()
+  
 }
