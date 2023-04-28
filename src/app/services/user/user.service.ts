@@ -41,4 +41,29 @@ export class UserService {
     }
   } // End of getUser()
 
+  public async getAllUsers(): Promise<User[]> {
+    try {
+      const usersRef = collection(this.db, 'users');
+      const usersSnapshot = await getDocs(usersRef);
+  
+      const users: User[] = [];
+      usersSnapshot.forEach((doc) => {
+        const data = doc.data();
+        const user: User = {
+          id: doc.id,
+          name: data['name'],
+          email: data['email'],
+          // Add other fields as necessary
+        };
+        users.push(user);
+      });
+  
+      return users;
+    } catch (error) {
+      console.error("Error getting all users: ", error);
+      throw error;
+    }
+  } // End of getAllUsers()
+  
+
 }

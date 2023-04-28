@@ -47,6 +47,8 @@ import { environment } from './environments/environment';
 import { AccountPageComponent } from './pages/account-page/account-page.component';
 import { ThreadPageComponent } from './pages/thread-page/thread-page.component';
 
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatChipsModule} from '@angular/material/chips';
 
 
 // Initialize Firebase
@@ -84,6 +86,8 @@ const auth = getAuth(app);
     MatProgressBarModule,
     MatListModule,
     MatSidenavModule,
+    MatAutocompleteModule,
+    MatChipsModule,
     //provideFirebaseApp(() => initializeApp(environment.firebase,)), // <-- Initialize Firebase App
     provideFirestore(() => getFirestore()), // <-- Initialize Firestore
   ],
