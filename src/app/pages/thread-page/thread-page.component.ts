@@ -96,7 +96,7 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
       const message: Message = {
         content: this.messageForm.value.content,
         senderId: currentUser.id,
-        senderName: 'Me', // Add this line
+        senderName: userDetails.name,
         threadId: this.threadId,
         // recipientId is not needed in this function, but it may be necessary elsewhere in your code
       };
