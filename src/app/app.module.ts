@@ -50,6 +50,8 @@ import { ThreadPageComponent } from './pages/thread-page/thread-page.component';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatChipsModule} from '@angular/material/chips';
 
+import {MatBadgeModule} from '@angular/material/badge';
+
 
 // Initialize Firebase
 const app = initializeApp(environment.firebase);
@@ -88,6 +90,7 @@ const auth = getAuth(app);
     MatSidenavModule,
     MatAutocompleteModule,
     MatChipsModule,
+    MatBadgeModule,
     //provideFirebaseApp(() => initializeApp(environment.firebase,)), // <-- Initialize Firebase App
     provideFirestore(() => getFirestore()), // <-- Initialize Firestore
   ],

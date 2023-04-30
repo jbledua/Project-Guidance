@@ -16,9 +16,12 @@ export class InboxPageComponent implements OnInit {
   public isLoading = false;
   public currentUser: User | null = null;
   public unreadCount: number = 0;
+  unreadCounts: Promise<number>[] = [];
+  
 
 
   constructor(private messageService: MessageService, private authService: AuthService) {}
+
 
   async ngOnInit(): Promise<void> {
     this.isLoading = true;
@@ -28,26 +31,14 @@ export class InboxPageComponent implements OnInit {
       // Get the threads for the current user
       this.threads = await this.messageService.getThreadsForUser(this.currentUser.id);
 
+      this.updateUnreadCounts();
 
-      for(let i = 0; i < this.threads.length; i++) {
-        const unreadCount = await this.messageService.getUnreadMessageCountForThread(this.threads[i].id, this.currentUser.id);
 
-        // Log the unread count (for testing purposes)
-        console.log('Thread:', this.threads[i].id, ' Unread:', unreadCount);
-      }
+      // for(let i = 0; i < this.threads.length; i++) {
+      //   const unreadCount = await this.messageService.getUnreadMessageCountForThread(this.threads[i].id, this.currentUser.id);
 
-      // if(this.currentUser.id)
-      // {  
-      //   // Create an array to hold all the Promises
-      //   const promises = this.threads.map(thread => this.messageService.getUnreadMessageCountForThread(thread.id, this.currentUser?.id));
-        
-      //   // Wait for all Promises to resolve
-      //   const unreadCounts = await Promise.all(promises);
-        
-      //   // Now, unreadCounts is an array of unread counts, and you can log them
-      //   for(let i = 0; i < this.threads.length; i++) {
-      //     console.log('Thread:', this.threads[i].id, ' Unread:', unreadCounts[i]);
-      //   }
+      //   // Log the unread count (for testing purposes)
+      //   console.log('Thread:', this.threads[i].id, ' Unread:', unreadCount);
       // }
 
 
@@ -58,6 +49,16 @@ export class InboxPageComponent implements OnInit {
      // Check for unread messages
 
   }
+
+  updateUnreadCounts() {
+    if (!this.currentUser) {
+      console.log('Error: currentUser is null');
+      return;
+    }
+    this.unreadCounts = this.threads.map(thread => this.messageService.getUnreadMessageCountForThread(thread.id, this.currentUser!.id));
+    
+  }
+  
 
   // This method is used to create a new message
   createNewMessage(): void {
