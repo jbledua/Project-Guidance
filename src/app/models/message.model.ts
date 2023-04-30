@@ -6,4 +6,5 @@ export interface Message {
     recipientId?: string;
     threadId: string;
     timestamp?: Date;
+    read: string[];
   }

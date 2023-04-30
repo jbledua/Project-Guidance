@@ -27,6 +27,9 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
     content: ['', Validators.required]
   });
 
+  public currentUser: User | null = null;
+  public unreadCount: number = 0;
+
   private unsubscribeFromNewMessages?: () => void;
 
   constructor(
@@ -98,6 +101,7 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
         senderId: currentUser.id,
         senderName: userDetails.name,
         threadId: this.threadId,
+        read:  [currentUser.id] 
         // recipientId is not needed in this function, but it may be necessary elsewhere in your code
       };
   

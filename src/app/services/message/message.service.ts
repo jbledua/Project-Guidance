@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
-import { getFirestore, addDoc, collection, serverTimestamp, query, where, getDocs, doc, getDoc, orderBy, limit ,onSnapshot } from 'firebase/firestore';
+import { getFirestore, addDoc, collection, serverTimestamp, query, where, getDocs, doc, getDoc, orderBy, limit ,onSnapshot, arrayUnion } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 import { Message } from '../../models/message.model';
 import { Thread } from '../../models/thread.model';
 import { User } from '../../models/user.model';
+
+import { updateDoc, setDoc } from "firebase/firestore"; // Add this line at the top
+
 
 @Injectable({
   providedIn: 'root'
@@ -100,6 +103,7 @@ export class MessageService {
           recipientId: data['recipientId'],
           threadId: data['threadId'],
           timestamp: data['timestamp'].toDate(),
+          read: data['read'] || {},
         };
         return message;
       }
@@ -135,6 +139,7 @@ export class MessageService {
           recipientId: data['recipientId'],
           threadId: data['threadId'],
           timestamp: data['timestamp'].toDate(),
+          read: data['read'] || {},
         };
         messages.push(message);
       });
@@ -158,9 +163,10 @@ export class MessageService {
         const newMessageRef = await addDoc(collection(this.db, 'messages'), {
           content: message.content,
           senderId: message.senderId,
-          senderName: message.senderName, // Add this line
+          senderName: message.senderName,
           threadId: message.threadId,
-          timestamp: serverTimestamp()
+          timestamp: serverTimestamp(),
+          read: [message.senderId]
         });
         console.log("New message added with ID: ", newMessageRef.id);
       } else {
@@ -193,6 +199,7 @@ export class MessageService {
           recipientId: data['recipientId'],
           threadId: data['threadId'],
           timestamp: data['timestamp'].toDate(),
+          read: data['read'] || {}
         };
         messages.push(message);
       });
@@ -215,5 +222,49 @@ export class MessageService {
       throw error;
     }
   } // End of createThread()
+
+  public async markMessageAsRead(message: Message, uid: string): Promise<void> {
+    try {
+      const messageRef = doc(this.db, `messages/${message.id}`);
+  
+      // Add the user's UID to the 'read' array
+      await updateDoc(messageRef, {
+        read: arrayUnion(uid)
+      });
+    } catch (error) {
+      console.error('Error marking message as read:', error);
+      throw error;
+    }
+  } // End of markMessageAsRead()
+  
+  public async getUnreadMessageCountForThread(threadId: string, uid: string): Promise<number> {
+    try {
+      const messagesRef = collection(this.db, 'messages');
+  
+      // Query for all messages in the thread
+      const messagesQuery = query(
+        messagesRef,
+        where('threadId', '==', threadId)
+      );
+  
+      const messagesSnapshot = await getDocs(messagesQuery);
+  
+      let unreadCount = 0;
+  
+      // Count the messages where 'read' does not contain the user's UID
+      messagesSnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (Array.isArray(data['read']) && !data['read'].includes(uid)) { // Check if 'read' is an array
+          unreadCount++;
+        }
+      });
+  
+      // Return the number of unread messages
+      return unreadCount;
+    } catch (error) {
+      console.error('Error getting unread message count for thread:', error);
+      throw error;
+    }
+  } // End of getUnreadMessageCountForThread()
   
 }
