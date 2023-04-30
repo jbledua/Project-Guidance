@@ -266,5 +266,19 @@ export class MessageService {
       throw error;
     }
   } // End of getUnreadMessageCountForThread()
+
+  public async addUserToThread(threadId: string, userId: string): Promise<void> {
+    try {
+      const threadRef = doc(this.db, 'threads', threadId);
+  
+      // Add the user's UID to the 'members' array
+      await updateDoc(threadRef, {
+        members: arrayUnion(userId)
+      });
+    } catch (error) {
+      console.error('Error adding user to thread:', error);
+      throw error;
+    }
+  } // End of addUserToThread()
   
 }

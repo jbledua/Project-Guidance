@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms'; // Import FormBuilder, FormGroup, and Validators
 import { AuthService } from '../../services/auth/auth.service'; // Import AuthService
+import { MessageService } from '../../services/message/message.service';
+
 
 import { ViewChild } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
@@ -20,6 +22,7 @@ export class RegisterPageComponent {
 
   constructor(
     private formBuilder: FormBuilder,
+    private messageService: MessageService, // Add this line
     private authService: AuthService,
     private _formBuilder: FormBuilder
   ) {} // End of constructor()
@@ -47,6 +50,17 @@ export class RegisterPageComponent {
         .then((user) => {
           this.isLoading = false;
           console.log('User created:', user);
+          
+          // Add user to a specific thread
+          const threadId = 'dORB3L9x9BxCsPtBxf1i';
+          this.messageService.addUserToThread(threadId, user.uid)
+            .then(() => {
+              console.log('User added to the thread');
+            })
+            .catch((error) => {
+              console.error('Error during adding user to thread:', error);
+            });
+
           if (this.stepper.selected) {
             this.stepper.selected.completed = true;
           }
@@ -72,11 +86,10 @@ export class RegisterPageComponent {
           this.stepper.selected.completed = false;
         }
         // Throw an error or show an error message
-        
       }
-      
     }
   } // End of submitRegisterForm()
+
 
   submitVerifyForm(): void {
     if (this.stepper.selected) {
