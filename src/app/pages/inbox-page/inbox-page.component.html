@@ -3,13 +3,15 @@
     <div class="inbox-container">
         <mat-list>
             <mat-list-item *ngFor="let thread of threads; let i = index" [routerLink]="['/thread', thread.id]">
+             
+                  <!-- Private Message -->
+                  <mat-icon matListItemIcon *ngIf="unreadCountsNumber[i] && (thread.members.length <= 2)" [matBadge]="unreadCountsNumber[i]" matBadgeColor="primary">person</mat-icon>
+                  <mat-icon matListItemIcon *ngIf="!unreadCountsNumber[i] && (thread.members.length <= 2)">person</mat-icon>
+       
+                  <!-- Group Message -->
+                  <mat-icon matListItemIcon *ngIf="unreadCountsNumber[i] && (thread.members.length > 2)" [matBadge]="unreadCountsNumber[i]" matBadgeColor="primary">group</mat-icon>
+                  <mat-icon matListItemIcon *ngIf="!unreadCountsNumber[i] && (thread.members.length > 2)">group</mat-icon>
 
-                <!-- Private Message -->
-                <mat-icon matListItemIcon *ngIf="thread.members.length <= 2" [matBadge]="unreadCounts[i] | async" matBadgeColor="primary">person</mat-icon>
-
-                <!-- Group Message -->
-                <mat-icon matListItemIcon *ngIf="thread.members.length > 2" [matBadge]="unreadCounts[i] | async" matBadgeColor="primary">group</mat-icon>
-                
                 <span matListItemTitle>{{ thread.subject || 'No Subject' }}</span>
                 <span matListItemLine *ngIf="thread.lastMessage">{{ shortenMessage(thread.lastMessage, 50) }}</span>
 

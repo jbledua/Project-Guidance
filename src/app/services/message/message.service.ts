@@ -151,6 +151,38 @@ export class MessageService {
     }
   } // End of getMessagesForThread()
 
+  // Listen for new threads for a specific user
+  public listenForNewThreads(uid: string, callback: (threads: Thread[]) => void): () => void {
+    const threadsRef = collection(this.db, 'threads');
+    const threadsQuery = query(
+      threadsRef,
+      where('members', 'array-contains', uid)
+    );
+
+  return onSnapshot(threadsQuery, async (snapshot) => {
+    const threads: Thread[] = [];
+    const promises = snapshot.docChanges().map(async (change) => {
+      if (change.type === 'added' || change.type === 'modified') {
+        const data = change.doc.data();
+        const lastMessage = await this.getLastMessageForThread(change.doc.id);
+
+        const thread: Thread = {
+          id: change.doc.id,
+          subject: data['subject'],
+          members: data['members'],
+          createdAt: data['createdAt'].toDate(),
+          lastMessage: lastMessage?.content || "",
+        };
+        threads.push(thread);
+      }
+    });
+
+    await Promise.all(promises);
+    callback(threads);
+  });
+} // End of listenForNewThreads()
+
+
 
   // Get a specific user by ID
   public async addMessageToThread(message: Message): Promise<void> {
@@ -231,6 +263,7 @@ export class MessageService {
       await updateDoc(messageRef, {
         read: arrayUnion(uid)
       });
+
     } catch (error) {
       console.error('Error marking message as read:', error);
       throw error;

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MessageService } from '../../services/message/message.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { Thread } from '../../models/thread.model';
@@ -12,12 +12,15 @@ import { count } from 'rxjs';
   styleUrls: ['./inbox-page.component.scss']
 })
 export class InboxPageComponent implements OnInit {
-  threads: Thread[] = [];
+  public threads: Thread[] = [];
   public isLoading = false;
   public currentUser: User | null = null;
   public unreadCount: number = 0;
-  unreadCounts: Promise<number>[] = [];
-  
+  public unreadCounts: Promise<number>[] = [];
+  public unreadCountsNumber: number[] = [];
+
+  private unsubscribeFromNewThreads: (() => void) | null = null;
+
 
 
   constructor(private messageService: MessageService, private authService: AuthService) {}
@@ -31,32 +34,33 @@ export class InboxPageComponent implements OnInit {
       // Get the threads for the current user
       this.threads = await this.messageService.getThreadsForUser(this.currentUser.id);
 
+      // Update the unread counts
       this.updateUnreadCounts();
 
-
-      // for(let i = 0; i < this.threads.length; i++) {
-      //   const unreadCount = await this.messageService.getUnreadMessageCountForThread(this.threads[i].id, this.currentUser.id);
-
-      //   // Log the unread count (for testing purposes)
-      //   console.log('Thread:', this.threads[i].id, ' Unread:', unreadCount);
-      // }
-
+      // Listen for new threads
+      this.unsubscribeFromNewThreads = this.messageService.listenForNewThreads(this.currentUser.id, (newThreads) => {
+        this.threads = newThreads;
+        this.updateUnreadCounts();
+      });
 
       // Set the loading state to false
       this.isLoading = false;
     }
 
-     // Check for unread messages
-
   }
 
-  updateUnreadCounts() {
+  async updateUnreadCounts() {
     if (!this.currentUser) {
       console.log('Error: currentUser is null');
       return;
     }
-    this.unreadCounts = this.threads.map(thread => this.messageService.getUnreadMessageCountForThread(thread.id, this.currentUser!.id));
-    
+  
+    this.unreadCounts = this.threads.map(thread => 
+      this.messageService.getUnreadMessageCountForThread(thread.id, this.currentUser!.id)
+    );
+  
+    // Use Promise.all to wait for all promises to resolve
+    this.unreadCountsNumber = await Promise.all(this.unreadCounts);
   }
   
 
@@ -73,4 +77,11 @@ export class InboxPageComponent implements OnInit {
     }
     return message.substring(0, maxLength -  3) + '...';
   }
+
+  ngOnDestroy(): void {
+    if (this.unsubscribeFromNewThreads) {
+      this.unsubscribeFromNewThreads();
+    }
+  }
+  
 }

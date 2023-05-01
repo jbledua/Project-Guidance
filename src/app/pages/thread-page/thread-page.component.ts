@@ -36,8 +36,6 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
   public hideScrollFab: boolean = false;
 
 
-
-
   private unsubscribeFromNewMessages?: () => void;
 
   @ViewChild('bottom', { read: ElementRef }) private bottom!: ElementRef;
@@ -55,6 +53,13 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
     // Get the thread and messages
     this.thread = await this.messageService.getThread(this.threadId);
     this.messages = await this.messageService.getMessagesForThread(this.threadId);
+
+    // Mark all messages as read
+    for (let message of this.messages) {
+      if (!message.read?.includes(this.currentUser?.id || '')) {
+          await this.messageService.markMessageAsRead(message, this.currentUser?.id || '');
+      }
+    }
   }
 
   // Initialize the component
@@ -87,9 +92,9 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
 
     this.currentUser = await this.userService.getUser(currentAuthUser.id)
 
-    // Get the thread and messages
-    this.thread = await this.messageService.getThread(this.threadId);
-    this.messages = await this.messageService.getMessagesForThread(this.threadId);
+
+    // Intial the thread and messages
+    this.loadMessages();
   
     // Set a flag to indicate loading is complete
     this.isLoading = false;
