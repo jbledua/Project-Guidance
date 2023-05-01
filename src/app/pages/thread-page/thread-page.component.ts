@@ -12,6 +12,10 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/models/user.model';
 
+import { ViewChild, ElementRef } from '@angular/core';
+
+
+
 @Component({
   selector: 'app-thread-page',
   templateUrl: './thread-page.component.html',
@@ -29,8 +33,14 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
 
   public currentUser: User | null = null;
   public unreadCount: number = 0;
+  public hideScrollFab: boolean = false;
+
+
+
 
   private unsubscribeFromNewMessages?: () => void;
+
+  @ViewChild('bottom', { read: ElementRef }) private bottom!: ElementRef;
 
   constructor(
     private authService: AuthService,
@@ -53,11 +63,29 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
     // Set a flag to indicate loading
     this.isLoading = true;
 
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const offsetHeight = window.innerHeight;
+      const bottomPosition = scrollHeight - offsetHeight;
+  
+      this.hideScrollFab = scrollTop >= bottomPosition;
+    });
+
+
     // Get the thread ID from the route
     this.threadId = this.route.snapshot.paramMap.get('id')!;
 
-    // Display the thread ID (for testing purposes)
-    //console.log('threadId:', this.threadId); 
+
+    // Get the current user
+    const currentAuthUser = await this.authService.getCurrentUser();
+    
+    if (!currentAuthUser) {
+      console.error('No current user');
+      return;
+    }
+
+    this.currentUser = await this.userService.getUser(currentAuthUser.id)
 
     // Get the thread and messages
     this.thread = await this.messageService.getThread(this.threadId);
@@ -74,6 +102,15 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
     });
 
   }
+
+  // Check if this message was sent by the current user
+  public isMessageFromCurrentUser(message: Message): boolean {
+    
+    //console.log('message:', message.id, " is ", (message.senderId === this.currentUser?.id)? "from current user" : "not from current user");
+    
+    return message.senderId === this.currentUser?.id;
+  }
+
 
   
 
@@ -116,6 +153,12 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
       
     }
   } // End of sendMessage()
+
+  
+
+  scrollToBottom(): void {
+    this.bottom.nativeElement.scrollIntoView({ behavior: 'smooth' });
+  }
   
 
   ngOnDestroy(): void {

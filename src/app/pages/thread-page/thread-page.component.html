@@ -1,7 +1,13 @@
 <div class="center-container">
   <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
   <div class="content-container">
-    <mat-card class="message-card" *ngFor="let message of messages">
+    <mat-card 
+      class="message-card" 
+      *ngFor="let message of messages"
+      [ngClass]="{
+        'message-card-sent': isMessageFromCurrentUser(message),
+        'message-card-received': !isMessageFromCurrentUser(message)
+      }">
       <mat-card-header>
         <mat-card-subtitle>{{ message.senderName }}</mat-card-subtitle>
       </mat-card-header>
@@ -13,6 +19,10 @@
       </mat-card-footer>
     </mat-card>
   </div>
+  <div #bottom></div>
+  <button mat-mini-fab color="primary" *ngIf="!hideScrollFab" class="scroll-down-button" (click)="scrollToBottom()">
+    <mat-icon>keyboard_arrow_down</mat-icon>
+  </button>
 </div>
   <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
     <mat-toolbar class="message-toolbar">
@@ -20,7 +30,7 @@
       
       <mat-form-field class="message-input-field">
         <input matInput formControlName="content" placeholder="Type your message...">
-        <button matSuffix mat-icon-button color="primary" type="submit" [hidden]="messageForm.invalid">
+        <button matSuffix mat-icon-button type="submit" [hidden]="messageForm.invalid">
           <mat-icon>send</mat-icon>
         </button>
       </mat-form-field> 
