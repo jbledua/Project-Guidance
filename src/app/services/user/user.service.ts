@@ -41,6 +41,7 @@ export class UserService {
     }
   } // End of getUser()
 
+  // Get all users from Firestore
   public async getAllUsers(): Promise<User[]> {
     try {
       const usersRef = collection(this.db, 'users');
@@ -84,8 +85,5 @@ export class UserService {
       throw error;
     }
   } // End of getContacts()
-  
-
-  // Get contacts for a user
   
 }
