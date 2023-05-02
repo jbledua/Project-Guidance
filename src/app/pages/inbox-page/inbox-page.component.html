@@ -16,17 +16,16 @@
                   <span matListItemTitle>{{ thread.subject || 'No Subject' }}</span>
                   <span matListItemLine *ngIf="thread.lastMessage?.content">{{shortenMessage(thread.lastMessage!.content,20)}}</span>
                   
-                  <!-- Created At
-                    <span matListItemLine *ngIf="thread.createdAt">Created: {{ thread.createdAt | date}}</span>
-                  -->
+                  <!-- Created At -->
+                  <span class="timestamp" matListItemLine *ngIf="thread.lastMessage?.timestamp"> {{ thread.lastMessage?.timestamp | date:'shortTime' }}</span>
+
                 </mat-list-item>
                 <mat-divider></mat-divider>
               </div>
         </mat-list>
       </div>
-      <!-- Create new Thread (disabled for now)
+      <!-- Create new Thread (disabled for now) -->
         <button mat-fab class="create-message-button" color="primary" routerLink="/new-thread">
           <mat-icon>add</mat-icon>
         </button>
-      -->
 </div>
