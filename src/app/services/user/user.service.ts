@@ -66,4 +66,6 @@ export class UserService {
   } // End of getAllUsers()
   
 
+  // Get contacts for a user
+  
 }

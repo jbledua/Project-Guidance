@@ -1,13 +1,26 @@
 import { Injectable } from '@angular/core';
-import { getFirestore, addDoc, collection, serverTimestamp, query, where, getDocs, doc, getDoc, orderBy, limit ,onSnapshot, arrayUnion } from 'firebase/firestore';
+
 import { getAuth } from 'firebase/auth';
+import { 
+  getFirestore, 
+  addDoc, 
+  collection, 
+  serverTimestamp, 
+  query, 
+  where, 
+  getDocs, 
+  doc, 
+  getDoc, 
+  orderBy, 
+  limit ,
+  onSnapshot, 
+  arrayUnion,
+  updateDoc
+} from 'firebase/firestore';
 
 import { Message } from '../../models/message.model';
 import { Thread } from '../../models/thread.model';
 import { User } from '../../models/user.model';
-
-import { updateDoc, setDoc } from "firebase/firestore"; // Add this line at the top
-
 
 @Injectable({
   providedIn: 'root'
@@ -19,8 +32,12 @@ export class MessageService {
 
   constructor() { }
 
-  // Get threads for a specific user
-  public async getThreadsForUser(uid: string): Promise<Thread[]> {
+  //----------------------------------------------------------------------------------
+  // THREAD METHODS
+  //----------------------------------------------------------------------------------
+
+   // Get threads for a specific user
+   public async getThreadsForUser(uid: string): Promise<Thread[]> {
     try {
       const threadsRef = collection(this.db, 'threads');
       const threadsQuery = query(threadsRef, where('members', 'array-contains', uid));
@@ -28,15 +45,19 @@ export class MessageService {
   
       const threads: Thread[] = [];
       for (const doc of threadSnapshot.docs) {
-        const data = doc.data();
-        const lastMessageData = await this.getLastMessageForThread(doc.id);
-        const lastMessage = lastMessageData ? lastMessageData.content : "";
-  
+        const threadData = doc.data();
+
+        // Get the lastMessage object from the thread document
+      const lastMessage = threadData['lastMessage'] ? {
+        content: threadData['lastMessage']['content'],
+        timestamp: threadData['lastMessage']['timestamp'].toDate()
+      } : null;
+
         threads.push({
           id: doc.id,
-          subject: data['subject'],
-          members: data['members'],
-          createdAt: data['createdAt'].toDate(),
+          subject: threadData['subject'],
+          members: threadData['members'],
+          createdAt: threadData['createdAt'].toDate(),
           lastMessage: lastMessage,
         });
       }
@@ -48,17 +69,20 @@ export class MessageService {
     }
   } // End of getThreadsForUser()
 
-  // Get a specific thread by ID
-  public async getThread(threadId: string): Promise<Thread | null> {
+   // Get a specific thread by ID
+   public async getThread(threadId: string): Promise<Thread | null> {
     try {
       const threadDocRef = doc(this.db, 'threads', threadId);
       const threadSnapshot = await getDoc(threadDocRef);
       if (threadSnapshot.exists()) {
         const threadData = threadSnapshot.data();
 
-        const lastMessage = await this.getLastMessageForThread(threadId);
-
         if (threadData) {
+          // Get the lastMessage object from the thread document
+          const lastMessage = threadData['lastMessage'] ? {
+            content: threadData['lastMessage']['content'],
+            timestamp: threadData['lastMessage']['timestamp'].toDate()
+          } : null;
 
           // Convert the Firestore Timestamp to a Date object
           const createdAt = threadData['createdAt'].toDate();
@@ -68,7 +92,7 @@ export class MessageService {
             subject: threadData['subject'], 
             members: threadData['members'], 
             createdAt,
-            lastMessage: lastMessage?.content || ""
+            lastMessage: lastMessage
           };
         }
       }
@@ -79,41 +103,77 @@ export class MessageService {
     }
   } // End of getThread()
 
-  public async getLastMessageForThread(threadId: string): Promise<Message | null> {
-    try {
-      const messagesRef = collection(this.db, 'messages');
+
+  // Listen for new threads for a specific user
+  public listenForNewThreads(uid: string, callback: (threads: Thread[]) => void): () => void {
+    const threadsRef = collection(this.db, 'threads');
+    const threadsQuery = query(
+      threadsRef,
+      where('members', 'array-contains', uid)
+    );
   
-      const messagesQuery = query(
-        messagesRef,
-        where('threadId', '==', threadId),
-        orderBy('timestamp', 'desc'),
-        limit(1)
-      );
+    return onSnapshot(threadsQuery, async (snapshot) => {
+      const threads: Thread[] = [];
+      const promises = snapshot.docs.map(async (doc) => {
+        const threadData = doc.data();
   
-      const messagesSnapshot = await getDocs(messagesQuery);
+        // Get the lastMessage object from the thread document
+        const lastMessage = threadData['lastMessage'] ? {
+          content: threadData['lastMessage']['content'],
+          timestamp: threadData['lastMessage']['timestamp'].toDate()
+        } : null;
+
   
-      if (!messagesSnapshot.empty) {
-        const doc = messagesSnapshot.docs[0];
-        const data = doc.data();
-        const message: Message = {
+        const thread: Thread = {
           id: doc.id,
-          content: data['content'],
-          senderId: data['senderId'],
-          senderName: data['senderName'], // Add this line
-          recipientId: data['recipientId'],
-          threadId: data['threadId'],
-          timestamp: data['timestamp'].toDate(),
-          read: data['read'] || {},
+          subject: threadData['subject'],
+          members: threadData['members'],
+          createdAt: threadData['createdAt'].toDate(),
+          lastMessage: lastMessage,
         };
-        return message;
-      }
-      return null;
+        threads.push(thread);
+      });
+  
+      await Promise.all(promises);
+      callback(threads);
+    });
+  } // End of listenForNewThreads()
+
+  
+  // Create a new thread
+  public async createThread(thread: Omit<Thread, 'id'>): Promise<string> {
+    try {
+      // Add a new document with a generated ID
+      const newThreadRef = await addDoc(collection(this.db, 'threads'), {
+        ...thread,
+        createdAt: serverTimestamp()
+      });
+      console.log("New thread created with ID: ", newThreadRef.id);
+      return newThreadRef.id;
     } catch (error) {
-      console.error('Error getting last message for thread:', error);
+      console.error("Error creating thread: ", error);
       throw error;
     }
-  } // End of getLastMessageForThread()
+  } // End of createThread()
+
+  // Add user to a specific thread
+  public async addUserToThread(threadId: string, userId: string): Promise<void> {
+    try {
+      const threadRef = doc(this.db, 'threads', threadId);
   
+      // Add the user's UID to the 'members' array
+      await updateDoc(threadRef, {
+        members: arrayUnion(userId)
+      });
+    } catch (error) {
+      console.error('Error adding user to thread:', error);
+      throw error;
+    }
+  } // End of addUserToThread()
+
+  //----------------------------------------------------------------------------------
+  // MESSAGE METHODS
+  //----------------------------------------------------------------------------------
 
   // Get messages for a specific thread
   public async getMessagesForThread(threadId: string): Promise<Message[]> {
@@ -151,40 +211,7 @@ export class MessageService {
     }
   } // End of getMessagesForThread()
 
-  // Listen for new threads for a specific user
-  public listenForNewThreads(uid: string, callback: (threads: Thread[]) => void): () => void {
-    const threadsRef = collection(this.db, 'threads');
-    const threadsQuery = query(
-      threadsRef,
-      where('members', 'array-contains', uid)
-    );
-
-  return onSnapshot(threadsQuery, async (snapshot) => {
-    const threads: Thread[] = [];
-    const promises = snapshot.docChanges().map(async (change) => {
-      if (change.type === 'added' || change.type === 'modified') {
-        const data = change.doc.data();
-        const lastMessage = await this.getLastMessageForThread(change.doc.id);
-
-        const thread: Thread = {
-          id: change.doc.id,
-          subject: data['subject'],
-          members: data['members'],
-          createdAt: data['createdAt'].toDate(),
-          lastMessage: lastMessage?.content || "",
-        };
-        threads.push(thread);
-      }
-    });
-
-    await Promise.all(promises);
-    callback(threads);
-  });
-} // End of listenForNewThreads()
-
-
-
-  // Get a specific user by ID
+  // Add a new message to a specific thread
   public async addMessageToThread(message: Message): Promise<void> {
     try {
       const auth = getAuth();
@@ -200,7 +227,19 @@ export class MessageService {
           timestamp: serverTimestamp(),
           read: [message.senderId]
         });
-        console.log("New message added with ID: ", newMessageRef.id);
+
+        // Get the thread document reference
+        const threadRef = doc(this.db, 'threads', message.threadId);
+
+        // Update the thread document with the last message content and timestamp
+        await updateDoc(threadRef, {
+          lastMessage: {
+            content: message.content,
+            timestamp: serverTimestamp()
+          }
+        });
+        console.log("Thread document updated with last message");
+
       } else {
         throw new Error("No user is signed in");
       }
@@ -209,6 +248,7 @@ export class MessageService {
       throw error;
     }
   } // End of addMessageToThread()
+
 
   // Listen for new messages in a specific thread
   public listenForNewMessages(threadId: string, callback: (messages: Message[]) => void): () => void {
@@ -239,22 +279,7 @@ export class MessageService {
     });
   } // End of listenForNewMessages()
   
-  // Create a new thread
-  public async createThread(thread: Omit<Thread, 'id'>): Promise<string> {
-    try {
-      // Add a new document with a generated ID
-      const newThreadRef = await addDoc(collection(this.db, 'threads'), {
-        ...thread,
-        createdAt: serverTimestamp()
-      });
-      console.log("New thread created with ID: ", newThreadRef.id);
-      return newThreadRef.id;
-    } catch (error) {
-      console.error("Error creating thread: ", error);
-      throw error;
-    }
-  } // End of createThread()
-
+  // Mark a specific message as read
   public async markMessageAsRead(message: Message, uid: string): Promise<void> {
     try {
       const messageRef = doc(this.db, `messages/${message.id}`);
@@ -270,6 +295,7 @@ export class MessageService {
     }
   } // End of markMessageAsRead()
   
+  // Get the number of unread messages for a specific thread
   public async getUnreadMessageCountForThread(threadId: string, uid: string): Promise<number> {
     try {
       const messagesRef = collection(this.db, 'messages');
@@ -300,18 +326,45 @@ export class MessageService {
     }
   } // End of getUnreadMessageCountForThread()
 
-  public async addUserToThread(threadId: string, userId: string): Promise<void> {
-    try {
-      const threadRef = doc(this.db, 'threads', threadId);
+  //---------------------------------------------------------------------------------
+  // INTERNAL/HELPER METHODS
+  //---------------------------------------------------------------------------------
   
-      // Add the user's UID to the 'members' array
-      await updateDoc(threadRef, {
-        members: arrayUnion(userId)
-      });
+  // Get the last message for a specific thread
+  public async getLastMessageForThread(threadId: string): Promise<Message | null> {
+    try {
+      const messagesRef = collection(this.db, 'messages');
+  
+      const messagesQuery = query(
+        messagesRef,
+        where('threadId', '==', threadId),
+        orderBy('timestamp', 'desc'),
+        limit(1)
+      );
+  
+      const messagesSnapshot = await getDocs(messagesQuery);
+  
+      if (!messagesSnapshot.empty) {
+        const doc = messagesSnapshot.docs[0];
+        const data = doc.data();
+        const message: Message = {
+          id: doc.id,
+          content: data['content'],
+          senderId: data['senderId'],
+          senderName: data['senderName'], // Add this line
+          recipientId: data['recipientId'],
+          threadId: data['threadId'],
+          timestamp: data['timestamp'].toDate(),
+          read: data['read'] || {},
+        };
+        return message;
+      }
+      return null;
     } catch (error) {
-      console.error('Error adding user to thread:', error);
+      console.error('Error getting last message for thread:', error);
       throw error;
     }
-  } // End of addUserToThread()
+  } // End of getLastMessageForThread()
+  
   
 }

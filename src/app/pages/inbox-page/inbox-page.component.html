@@ -2,24 +2,26 @@
     <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
     <div class="inbox-container">
         <mat-list>
-            <mat-list-item *ngFor="let thread of threads; let i = index" [routerLink]="['/thread', thread.id]">
-             
-                  <!-- Private Message -->
-                  <mat-icon matListItemIcon *ngIf="unreadCountsNumber[i] && (thread.members.length <= 2)" [matBadge]="unreadCountsNumber[i]" matBadgeColor="primary">person</mat-icon>
-                  <mat-icon matListItemIcon *ngIf="!unreadCountsNumber[i] && (thread.members.length <= 2)">person</mat-icon>
-       
-                  <!-- Group Message -->
+          <div *ngFor="let thread of threads; let i = index">
+            <mat-list-item  [routerLink]="['/thread', thread.id]">
+              
+              <!-- Private Message -->
+              <mat-icon matListItemIcon *ngIf="unreadCountsNumber[i] && (thread.members.length <= 2)" [matBadge]="unreadCountsNumber[i]" matBadgeColor="primary">person</mat-icon>
+              <mat-icon matListItemIcon *ngIf="!unreadCountsNumber[i] && (thread.members.length <= 2)">person</mat-icon>
+              
+              <!-- Group Message -->
                   <mat-icon matListItemIcon *ngIf="unreadCountsNumber[i] && (thread.members.length > 2)" [matBadge]="unreadCountsNumber[i]" matBadgeColor="primary">group</mat-icon>
                   <mat-icon matListItemIcon *ngIf="!unreadCountsNumber[i] && (thread.members.length > 2)">group</mat-icon>
-
-                <span matListItemTitle>{{ thread.subject || 'No Subject' }}</span>
-                <span matListItemLine *ngIf="thread.lastMessage">{{ shortenMessage(thread.lastMessage, 50) }}</span>
-
-                <!-- Created At
-                  <span matListItemLine *ngIf="thread.createdAt">Created: {{ thread.createdAt | date}}</span>
-                -->
+                  
+                  <span matListItemTitle>{{ thread.subject || 'No Subject' }}</span>
+                  <span matListItemLine *ngIf="thread.lastMessage?.content">{{shortenMessage(thread.lastMessage!.content,20)}}</span>
+                  
+                  <!-- Created At
+                    <span matListItemLine *ngIf="thread.createdAt">Created: {{ thread.createdAt | date}}</span>
+                  -->
+                </mat-list-item>
                 <mat-divider></mat-divider>
-            </mat-list-item>
+              </div>
         </mat-list>
       </div>
       <!-- Create new Thread (disabled for now)

@@ -149,7 +149,6 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
   
       try {
         await this.messageService.addMessageToThread(message);
-        console.log('Message sent successfully');
         this.messageForm.reset();
         this.loadMessages(); // Reload messages after sending
       } catch (error) {

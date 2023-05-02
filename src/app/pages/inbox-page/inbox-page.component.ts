@@ -40,6 +40,8 @@ export class InboxPageComponent implements OnInit {
       // Listen for new threads
       this.unsubscribeFromNewThreads = this.messageService.listenForNewThreads(this.currentUser.id, (newThreads) => {
         this.threads = newThreads;
+
+        // Update the unread counts
         this.updateUnreadCounts();
       });
 
@@ -65,13 +67,13 @@ export class InboxPageComponent implements OnInit {
   
 
   // This method is used to create a new message
-  createNewMessage(): void {
+  public createNewMessage(): void {
     // Your logic for creating a new message, e.g., navigate to a new message form
     console.log('Creating a new message');
   }
 
   // This method is used to shorten the message content to a maximum length
-  shortenMessage(message: string, maxLength: number): string {
+  public shortenMessage(message: string, maxLength: number): string {
     if (message.length <= maxLength) {
       return message;
     }
