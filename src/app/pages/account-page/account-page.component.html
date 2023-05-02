@@ -4,7 +4,12 @@
         <div>
           <label>Name: {{currentUser.name}}</label>
         </div>
-        <!-- Add more fields as needed -->
+        <h3>Contacts</h3>
+          <ul>
+            <li *ngFor="let contact of contacts">
+              {{contact.name}}
+            </li>
+          </ul>
       
         <!-- Add form for updating user information -->
       </div>

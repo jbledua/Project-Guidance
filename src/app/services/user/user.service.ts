@@ -64,6 +64,26 @@ export class UserService {
       throw error;
     }
   } // End of getAllUsers()
+
+  // Get contacts for a user
+  public async getContacts(uid: string): Promise<string[]> {
+    try {
+      const userDocRef = doc(this.db, 'users', uid);
+      const userSnapshot = await getDoc(userDocRef);
+      
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.data();
+        const contacts = userData['contacts'] || [];
+        return contacts;
+      } else {
+        console.error(`User with ID ${uid} does not exist.`);
+        return [];
+      }
+    } catch (error) {
+      console.error('Error getting contacts for user:', error);
+      throw error;
+    }
+  } // End of getContacts()
   
 
   // Get contacts for a user

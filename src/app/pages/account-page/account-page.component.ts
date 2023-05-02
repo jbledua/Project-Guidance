@@ -10,6 +10,7 @@ import { User } from '../../models/user.model';
 })
 export class AccountPageComponent implements OnInit {
   currentUser: User | null = null;
+  contacts: User[] = [];
 
   constructor(
     private authService: AuthService,
@@ -19,8 +20,17 @@ export class AccountPageComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     try {
       this.currentUser = await this.authService.getCurrentUser();
+      if (this.currentUser) {
+        const contactIds = await this.userService.getContacts(this.currentUser.id);
+        for (let id of contactIds) {
+          let contact = await this.userService.getUser(id);
+          if (contact !== null) {
+            this.contacts.push(contact);
+          }
+        }
+      }
     } catch (error) {
-      console.error('Error getting current user:', error);
+      console.error('Error getting current user or contacts:', error);
     }
   }
 
