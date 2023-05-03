@@ -3,8 +3,8 @@
         <mat-form-field appearance="fill">
             <mat-label>Members</mat-label>
             <mat-chip-grid #chipGrid aria-label="Member selection">
-              <mat-chip-row *ngFor="let member of members" (removed)="remove(member)">
-                {{member}}
+              <mat-chip-row *ngFor="let member of members" (removed)="remove(member)" color="primary">
+                {{member.name}}
                 <button matChipRemove [attr.aria-label]="'remove ' + member">
                   <mat-icon>cancel</mat-icon>
                 </button>
@@ -15,8 +15,8 @@
               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
               (matChipInputTokenEnd)="add($event)"/>
             <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-              <mat-option *ngFor="let member of filteredMembers | async" [value]="member">
-                {{member}}
+              <mat-option *ngFor="let member of filteredMembers | async" [value]="member.name">
+                {{member.name}}
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
