@@ -16,6 +16,8 @@ import { Subscription } from 'rxjs';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
+import { Router } from '@angular/router'; // Add this line
+
 
 @Component({
   selector: 'app-new-thread-page',
@@ -24,6 +26,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class NewThreadPageComponent implements OnInit {
   public separatorKeysCodes: number[] = [ENTER, COMMA];
+  public threadForm: FormGroup;
+
+
   public threadCtrl = new FormControl('');
   public subjectCtrl = new FormControl('');
   public filteredMembers: Observable<User[]> = of([]);
@@ -37,10 +42,19 @@ export class NewThreadPageComponent implements OnInit {
   constructor(
     private userService: UserService,
     private authService: AuthService,
-    private messageService: MessageService
-  ) { }
+    private messageService: MessageService,
+    private formBuilder: FormBuilder,
+    private router: Router,  // Add this line
+  ) {
+    this.threadForm = this.formBuilder.group({
+    subject: ['', Validators.required],
+    members: [[], Validators.required] // You might need to customize this
+  });
+   }
 
   async ngOnInit(): Promise<void> {
+
+    
 
     try {
       this.currentUser = await this.authService.getCurrentUser();
@@ -71,27 +85,29 @@ export class NewThreadPageComponent implements OnInit {
   // Add a contact to the list of members
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
-
+  
     if (value) {
       const member = this.contacts.find(contact => contact.name === value);
       if (member) {
         this.members.push(member);
+        this.threadForm.get('members')!.setValue(this.members); // Update form control
       }
     }
-
+  
     event.chipInput!.clear();
-
     this.threadCtrl.setValue(null);
-
   }
+  
 
   remove(member: User): void {
     const index = this.members.indexOf(member);
-
+  
     if (index >= 0) {
       this.members.splice(index, 1);
+      this.threadForm.get('members')!.setValue(this.members); // Update form control
     }
   }
+  
 
   selected(event: MatAutocompleteSelectedEvent): void {
     const selectedUserName = event.option.value as string;
@@ -99,10 +115,12 @@ export class NewThreadPageComponent implements OnInit {
   
     if (selectedUser && !this.members.some(member => member.id === selectedUser.id)) {
       this.members.push(selectedUser);
+      this.threadForm.get('members')!.setValue(this.members); // Update form control
       this.memberInput.nativeElement.value = '';
       this.threadCtrl.setValue(null);
     }
   }
+  
   
 
   private _filter(memberName: string): User[] {
@@ -119,23 +137,44 @@ export class NewThreadPageComponent implements OnInit {
     return filteredMembers;
   }
 
-  async createThread(event: Event): Promise<void> {
-    // Prevent the form from causing a page refresh
-    event.preventDefault();
-
+  async createThread(): Promise<void> {
     console.log("Creating thread");
+  
+    if (this.threadForm.valid) {
+      const subject = this.threadForm.get('subject')!.value;
+      //const members = this.threadForm.get('members')!.value;
 
-    if (this.subjectCtrl.value && this.members.length > 0) {
-      this.messageService.createThread(this.subjectCtrl.value, this.members)
-        .then(() => {
-          console.log('Thread created successfully');
-        })
-        .catch(error => {
-          console.error('Error creating thread:', error);
-        });
+      if(this.currentUser)
+      {
+        // Add the current user's ID to the members array if it's not already there
+        if (this.currentUser && !this.members.some(member => member.id === this.currentUser!.id)) {
+          this.members.push(this.currentUser);
+        }
+      }
+      else
+      {
+        console.log("Error with current user");
+        return;
+      }
+      
+
+      if (subject && this.members.length > 0) {
+        this.messageService.createThread(subject, this.members)
+          .then((threadId) => {
+            console.log('Thread created successfully');
+            this.router.navigate(['/thread', threadId]);  // navigate to the thread page
+
+          })
+          .catch(error => {
+            console.error('Error creating thread:', error);
+          });
+      } else {
+        console.log('Cannot create a thread without a subject and at least one member');
+      }
     } else {
-      console.log('Cannot create a thread without a subject and at least one member');
+      console.log('Thread form is invalid');
     }
   }
+  
   
 }

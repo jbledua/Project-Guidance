@@ -1,5 +1,5 @@
 <div class="center-container">
-    <form class="form-container" (ngSubmit)="createThread($event)">
+    <form class="form-container" [formGroup]="threadForm" (ngSubmit)="createThread()">
         <mat-card>
             <mat-card-header>
                 <mat-card-title>New Thread</mat-card-title>
@@ -7,7 +7,7 @@
             <mat-card-content>
                 <mat-form-field appearance="fill">
                     <mat-label>Subject</mat-label>
-                    <input matInput required [formControl]="subjectCtrl">
+                    <input matInput required formControlName="subject">
                 </mat-form-field>
                 <mat-form-field appearance="fill">
                     <mat-label>Members</mat-label>

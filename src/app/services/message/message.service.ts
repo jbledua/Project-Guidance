@@ -143,22 +143,22 @@ export class MessageService {
   // Create a new thread with a given subject and array of members
   public async createThread(subject: string, members: User[]): Promise<string> {
     try {
-      // Construct the thread data
-      const threadData = {
-        subject: subject,
-        members: members.map(member => member.id), // Assuming you're storing user IDs in the members array
-        createdAt: serverTimestamp()
-      };
+      // Convert members array to an array of member IDs
+      const memberIds = members.map(member => member.id);
 
       // Add a new document with a generated ID
-      const newThreadRef = await addDoc(collection(this.db, 'threads'), threadData);
+      const newThreadRef = await addDoc(collection(this.db, 'threads'), {
+        subject,
+        memberIds,
+        createdAt: serverTimestamp()
+      });
       console.log("New thread created with ID: ", newThreadRef.id);
-      return newThreadRef.id;
+      return newThreadRef.id;  // Return the new thread's ID
     } catch (error) {
       console.error("Error creating thread: ", error);
       throw error;
     }
-  } // End of createThread()
+} // End of createThread()
 
   
   // // Create a new thread
