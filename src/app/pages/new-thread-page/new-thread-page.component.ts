@@ -10,8 +10,12 @@ import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/models/user.model';
 
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { MessageService } from 'src/app/services/message/message.service';
 
 import { Subscription } from 'rxjs';
+
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 
 @Component({
   selector: 'app-new-thread-page',
@@ -21,6 +25,7 @@ import { Subscription } from 'rxjs';
 export class NewThreadPageComponent implements OnInit {
   public separatorKeysCodes: number[] = [ENTER, COMMA];
   public threadCtrl = new FormControl('');
+  public subjectCtrl = new FormControl('');
   public filteredMembers: Observable<User[]> = of([]);
   public members: User[] = [];
   public contacts: User[] = [];
@@ -31,7 +36,8 @@ export class NewThreadPageComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private authService: AuthService
+    private authService: AuthService,
+    private messageService: MessageService
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -76,7 +82,7 @@ export class NewThreadPageComponent implements OnInit {
     event.chipInput!.clear();
 
     this.threadCtrl.setValue(null);
-    
+
   }
 
   remove(member: User): void {
@@ -111,6 +117,25 @@ export class NewThreadPageComponent implements OnInit {
     // }
   
     return filteredMembers;
+  }
+
+  async createThread(event: Event): Promise<void> {
+    // Prevent the form from causing a page refresh
+    event.preventDefault();
+
+    console.log("Creating thread");
+
+    if (this.subjectCtrl.value && this.members.length > 0) {
+      this.messageService.createThread(this.subjectCtrl.value, this.members)
+        .then(() => {
+          console.log('Thread created successfully');
+        })
+        .catch(error => {
+          console.error('Error creating thread:', error);
+        });
+    } else {
+      console.log('Cannot create a thread without a subject and at least one member');
+    }
   }
   
 }
