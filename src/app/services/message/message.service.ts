@@ -152,7 +152,7 @@ export class MessageService {
       // Add a new document with a generated ID
       const newThreadRef = await addDoc(collection(this.db, 'threads'), {
         subject,
-        members,
+        members: memberIds,
         createdAt: serverTimestamp()
       });
       console.log("New thread created with ID: ", newThreadRef.id);
