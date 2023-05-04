@@ -3,9 +3,12 @@
     <div class="inbox-container">
         <mat-list>
           <div *ngFor="let thread of threads; let i = index">
-            <mat-list-item  [routerLink]="['/thread', thread.id]">
+            <mat-list-item [routerLink]="['/thread', thread.id]" #contextMenuTrigger (contextmenu)="onContextMenu($event, thread)">
+              <!-- 
+              <div [matMenuTriggerFor]="contextMenu" #contextMenuTrigger></div>
+                [matMenuTriggerFor]="contextMenu" #matMenuTrigger="matMenuTrigger" -->
               
-              <!-- Private Message -->
+              <!-- Private Message  -->
               <mat-icon matListItemIcon *ngIf="unreadCountsNumber[i] && (thread.members.length <= 2)" [matBadge]="unreadCountsNumber[i]" matBadgeColor="primary">person</mat-icon>
               <mat-icon matListItemIcon *ngIf="!unreadCountsNumber[i] && (thread.members.length <= 2)">person</mat-icon>
               
@@ -18,14 +21,24 @@
                   
                   <!-- Created At -->
                   <span class="timestamp" matListItemLine *ngIf="thread.lastMessage?.timestamp"> {{ thread.lastMessage?.timestamp | date:'shortTime' }}</span>
-
                 </mat-list-item>
                 <mat-divider></mat-divider>
               </div>
         </mat-list>
       </div>
+      <div style="visibility: hidden; position: fixed"
+          [style.left]="contextMenuPosition.x"
+          [style.top]="contextMenuPosition.y"
+          [matMenuTriggerFor]="contextMenu">
+      </div>
       <!-- Create new Thread (disabled for now) -->
-        <button mat-fab class="create-message-button" color="primary" routerLink="/new-thread">
-          <mat-icon>add</mat-icon>
-        </button>
+      <button mat-fab class="create-message-button" color="primary" routerLink="/new-thread">
+        <mat-icon>add</mat-icon>
+      </button>
+      <mat-menu #contextMenu="matMenu">
+        <ng-template matMenuContent let-item="item">
+          <button mat-menu-item (click)="onContextMenuAction1(item)">Copy</button>
+          <button mat-menu-item (click)="onContextMenuAction2(item)">Delete</button>
+        </ng-template>
+      </mat-menu>
 </div>

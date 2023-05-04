@@ -1,10 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MessageService } from '../../services/message/message.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { Thread } from '../../models/thread.model';
 
 import { User } from '../../models/user.model';
 import { count } from 'rxjs';
+
+import { MatMenu } from '@angular/material/menu';
+import { MatMenuTrigger } from '@angular/material/menu';
+
+
 
 @Component({
   selector: 'app-inbox-page',
@@ -84,6 +89,43 @@ export class InboxPageComponent implements OnInit {
     if (this.unsubscribeFromNewThreads) {
       this.unsubscribeFromNewThreads();
     }
+  }
+  //@ViewChild('contextMenu') contextMenu?: MatMenuTrigger;
+
+  @ViewChild(MatMenuTrigger) contextMenuTrigger?: MatMenuTrigger;
+  
+  openContextMenu(event: MouseEvent, thread: any) {
+    
+    event.preventDefault();
+    console.log('Opening context menu');
+
+    if (this.contextMenuTrigger) {
+      this.contextMenuTrigger.openMenu();
+    }
+    
+  }
+
+  @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
+
+  contextMenuPosition = { x: '0px', y: '0px' };
+
+  onContextMenu(event: MouseEvent, thread: Thread) {
+    event.preventDefault();
+    console.log('X: ' + event.clientX + ' Y: ' + event.clientY);
+
+    this.contextMenuPosition.x = event.clientX + 'px';
+    this.contextMenuPosition.y = event.clientY + 'px';
+    this.contextMenu.menuData = { 'thread': thread };
+    this.contextMenu.menu?.focusFirstItem('mouse');
+    this.contextMenu.openMenu();
+  }
+
+  onContextMenuAction1(thread: Thread) {
+    alert(`Click on Action 1 for ${thread.subject}`);
+  }
+
+  onContextMenuAction2(item: Thread) {
+    alert(`Click on Action 2 for ${item.subject}`);
   }
   
 }

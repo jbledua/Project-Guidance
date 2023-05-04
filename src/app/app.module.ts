@@ -52,6 +52,8 @@ import {MatChipsModule} from '@angular/material/chips';
 
 import {MatBadgeModule} from '@angular/material/badge';
 
+import { MatMenuTrigger } from '@angular/material/menu';
+
 
 // Initialize Firebase
 const app = initializeApp(environment.firebase);
