@@ -60,7 +60,7 @@
             <mat-icon>delete</mat-icon>
             Delete Thread
           </button>
-          <button mat-menu-item *ngIf="(thread.members.length > 2)" (click)="removeThread(thread)">
+          <button mat-menu-item *ngIf="(thread.members.length > 2)" (click)="leaveThread(thread)">
             <mat-icon>logout</mat-icon>
             Leave Thread
           </button>

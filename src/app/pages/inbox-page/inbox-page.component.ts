@@ -128,12 +128,14 @@ export class InboxPageComponent implements OnInit {
     event.preventDefault();
   }
 
-  removeThread(thread: Thread) {
+  leaveThread(thread: Thread) {
     console.log('Removing thread');
+    this.messageService.removeUserFromThread(thread.id, this.currentUser!.id);
   }
 
   deleteThread(thread: Thread) {
     console.log('Deleting thread');
+    this.messageService.deleteThread(thread.id);
   }
   
 }

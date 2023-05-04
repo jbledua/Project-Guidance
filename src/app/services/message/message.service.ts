@@ -15,7 +15,10 @@ import {
   limit ,
   onSnapshot, 
   arrayUnion,
-  updateDoc
+  updateDoc,
+  arrayRemove,
+  setDoc,
+  deleteDoc
 } from 'firebase/firestore';
 
 import { Message } from '../../models/message.model';
@@ -160,6 +163,35 @@ export class MessageService {
     }
 } // End of createThread()
 
+// Delete (move) a thread to the deleted/threads collection
+public async deleteThread(threadId: string): Promise<void> {
+  try {
+    // Get the thread document reference
+    const threadRef = doc(this.db, 'threads', threadId);
+    const threadSnapshot = await getDoc(threadRef);
+
+    if (!threadSnapshot.exists()) {
+      throw new Error(`Thread with ID ${threadId} does not exist.`);
+    }
+
+    // Get the deleted threads collection reference
+    const deletedThreadsRef = collection(this.db, 'deletedThreads');
+
+    // Add the thread document to the deleted threads collection
+    await setDoc(doc(deletedThreadsRef, threadId), {
+      ...threadSnapshot.data(),
+      deletedAt: serverTimestamp()
+    });
+
+    // Delete the thread document from the threads collection
+    await deleteDoc(threadRef);
+  } catch (error) {
+    console.error('Error deleting (moving) thread:', error);
+    throw error;
+  }
+} // End of deleteThread()
+
+
   
   // // Create a new thread
   // public async createThread(thread: Omit<Thread, 'id'>): Promise<string> {
@@ -191,6 +223,22 @@ export class MessageService {
       throw error;
     }
   } // End of addUserToThread()
+
+  // Remove user from a specific thread
+  public async removeUserFromThread(threadId: string, userId: string): Promise<void> {
+    try {
+      const threadRef = doc(this.db, 'threads', threadId);
+
+      // Remove the user's UID from the 'members' array
+      await updateDoc(threadRef, {
+        members: arrayRemove(userId)
+      });
+    } catch (error) {
+      console.error('Error removing user from thread:', error);
+      throw error;
+    }
+  } // End of removeUserFromThread()
+
 
   //----------------------------------------------------------------------------------
   // MESSAGE METHODS
@@ -299,6 +347,10 @@ export class MessageService {
       callback(messages);
     });
   } // End of listenForNewMessages()
+
+  //---------------------------------------------------------------------------------
+  // UNREAD MESSAGE METHODS
+  //---------------------------------------------------------------------------------
   
   // Mark a specific message as read
   public async markMessageAsRead(message: Message, uid: string): Promise<void> {
