@@ -111,21 +111,29 @@ export class InboxPageComponent implements OnInit {
 
   onContextMenu(event: MouseEvent, thread: Thread) {
     event.preventDefault();
-    console.log('X: ' + event.clientX + ' Y: ' + event.clientY);
 
     this.contextMenuPosition.x = event.clientX + 'px';
     this.contextMenuPosition.y = event.clientY + 'px';
-    this.contextMenu.menuData = { 'thread': thread };
-    this.contextMenu.menu?.focusFirstItem('mouse');
-    this.contextMenu.openMenu();
+
+    if(thread)
+    {
+      this.contextMenu.menuData = { 'thread': thread };
+      this.contextMenu.menu?.focusFirstItem('mouse');
+      this.contextMenu.openMenu();
+    }
+
   }
 
-  onContextMenuAction1(thread: Thread) {
-    alert(`Click on Action 1 for ${thread.subject}`);
+  blockDefault(event: MouseEvent) {
+    event.preventDefault();
   }
 
-  onContextMenuAction2(item: Thread) {
-    alert(`Click on Action 2 for ${item.subject}`);
+  removeThread(thread: Thread) {
+    console.log('Removing thread');
+  }
+
+  deleteThread(thread: Thread) {
+    console.log('Deleting thread');
   }
   
 }

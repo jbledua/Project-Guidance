@@ -36,9 +36,34 @@
         <mat-icon>add</mat-icon>
       </button>
       <mat-menu #contextMenu="matMenu">
-        <ng-template matMenuContent let-item="item">
-          <button mat-menu-item (click)="onContextMenuAction1(item)">Copy</button>
-          <button mat-menu-item (click)="onContextMenuAction2(item)">Delete</button>
+        <ng-template matMenuContent let-thread="thread">
+          <button mat-menu-item disabled>
+            <mat-icon>mark_chat_unread</mat-icon>
+            Mark as unread
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item disabled>
+            <mat-icon>push_pin</mat-icon>
+            Pin to top
+          </button>
+          <button mat-menu-item disabled>
+            <mat-icon>volume_off</mat-icon>
+            Mute notifications
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item disabled>
+            <mat-icon>archive</mat-icon>
+            Archive Thread
+          </button>
+          <!-- Delete/Leave Thread -->
+          <button mat-menu-item *ngIf="(thread.members.length <= 2)" (click)="deleteThread(thread)">
+            <mat-icon>delete</mat-icon>
+            Delete Thread
+          </button>
+          <button mat-menu-item *ngIf="(thread.members.length > 2)" (click)="removeThread(thread)">
+            <mat-icon>logout</mat-icon>
+            Leave Thread
+          </button>
         </ng-template>
       </mat-menu>
 </div>
