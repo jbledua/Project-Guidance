@@ -1,5 +1,8 @@
 <div class="center-container">
   <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+  <div *ngIf="messages.length === 0" class="empty-message-container">
+    <p>There are no messages in this thread.</p>
+  </div>  
   <div class="content-container">
     <mat-card 
       class="message-card" 
@@ -12,7 +15,11 @@
         <mat-card-subtitle>{{ message.senderName }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        <p>{{ message.content }}</p>
+        <!--
+        <div style="white-space:pre;">{{message.content}}</div>
+
+      -->
+        <p [innerHTML]="message.content"></p>
       </mat-card-content>
       <mat-card-footer class="footer">
         <span class="timestamp">{{ message.timestamp | date:'shortTime' }}</span>

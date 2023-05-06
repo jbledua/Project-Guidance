@@ -10,7 +10,20 @@
   color: gray;
 }
 
+.empty-message-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  color: #666;
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+}
 
+.message-content {
+  white-space: pre-wrap;
+}
 
 
 .thread-container {
@@ -42,7 +55,7 @@
   flex-direction: column;
   justify-items: center;
   align-items: center;
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - 64px - 78px);
   max-width: 100%;
   padding-bottom: 78px;  // Add bottom padding equal to the height of the toolbar
 }

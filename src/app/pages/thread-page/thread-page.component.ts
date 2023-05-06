@@ -54,6 +54,7 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
     this.thread = await this.messageService.getThread(this.threadId);
     this.messages = await this.messageService.getMessagesForThread(this.threadId);
 
+
     // Mark all messages as read
     for (let message of this.messages) {
       if (!message.read?.includes(this.currentUser?.id || '')) {
@@ -96,8 +97,7 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
     // Intial the thread and messages
     this.loadMessages();
   
-    // Set a flag to indicate loading is complete
-    this.isLoading = false;
+   
 
     // Display the messages (for testing purposes)
     //console.log('messages:', this.messages);
@@ -105,6 +105,9 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
     this.unsubscribeFromNewMessages = this.messageService.listenForNewMessages(this.threadId, (messages) => {
       this.messages = messages;
     });
+
+     // Set a flag to indicate loading is complete
+     this.isLoading = false;
 
   }
 

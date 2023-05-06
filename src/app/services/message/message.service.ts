@@ -191,24 +191,6 @@ public async deleteThread(threadId: string): Promise<void> {
   }
 } // End of deleteThread()
 
-
-  
-  // // Create a new thread
-  // public async createThread(thread: Omit<Thread, 'id'>): Promise<string> {
-  //   try {
-  //     // Add a new document with a generated ID
-  //     const newThreadRef = await addDoc(collection(this.db, 'threads'), {
-  //       ...thread,
-  //       createdAt: serverTimestamp()
-  //     });
-  //     console.log("New thread created with ID: ", newThreadRef.id);
-  //     return newThreadRef.id;
-  //   } catch (error) {
-  //     console.error("Error creating thread: ", error);
-  //     throw error;
-  //   }
-  // } // End of createThread()
-
   // Add user to a specific thread
   public async addUserToThread(threadId: string, userId: string): Promise<void> {
     try {
@@ -424,7 +406,7 @@ public async deleteThread(threadId: string): Promise<void> {
           id: doc.id,
           content: data['content'],
           senderId: data['senderId'],
-          senderName: data['senderName'], // Add this line
+          senderName: data['senderName'],
           recipientId: data['recipientId'],
           threadId: data['threadId'],
           timestamp: data['timestamp'].toDate(),
