@@ -1,5 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { AuthService } from './services/auth/auth.service';
+import { MessageService } from './services/message/message.service';
+import { ToolbarService } from './services/toolbar/toolbar.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { User } from './models/user.model';
 
@@ -24,15 +26,19 @@ export class AppComponent {
 
   constructor(
     public auth: AuthService,
+    public msgService: MessageService,
+    private toolbarService: ToolbarService,
     private router: Router
     ) { 
+      this.toolbarService.currentTitle.subscribe(title => this.toolbarTitle = title);
+
+
       // Subscribe to router events
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.updateToolbarTitle(event.url);
 
       // Set showBackButton to true when on /thread or /account, false otherwise
-      this.showBackButton = ['/account'].includes(event.url) || event.url.startsWith('/thread');
+      this.showBackButton = event.url.startsWith('/account')|| event.url.startsWith('/thread');
     
       }
     });
@@ -44,30 +50,7 @@ export class AppComponent {
       console.error('Error getting current user:', error);
     });
   }
-
-  // Update the toolbar title based on the current route
-  updateToolbarTitle(url: string): void {
-    switch (url) {
-      case '/inbox':
-        this.toolbarTitle = 'Inbox';
-        break;
-      case '/login':
-        this.toolbarTitle = 'Login';
-        break;
-      case '/register':
-        this.toolbarTitle = 'Register';
-        break;
-      case '/forgot':
-        this.toolbarTitle = 'Forgot Password';
-        break;
-      case '/account':
-        this.toolbarTitle = 'Account Settings';
-        break;
-      // Add more cases as needed
-      default:
-        this.toolbarTitle = 'Project Guidance';
-    }
-  }
+  
 
   // Add this new method
   goBack(): void {

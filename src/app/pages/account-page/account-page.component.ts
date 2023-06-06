@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+
 import { AuthService } from '../../services/auth/auth.service';
 import { UserService } from '../../services/user/user.service';
+import { ToolbarService } from '../../services/toolbar/toolbar.service'
+
 import { User } from '../../models/user.model';
 
 @Component({
@@ -14,10 +17,13 @@ export class AccountPageComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private toolbarService: ToolbarService
   ) { }
 
   async ngOnInit(): Promise<void> {
+    this.toolbarService.changeTitle('Account');
+    
     try {
       this.currentUser = await this.authService.getCurrentUser();
       if (this.currentUser) {

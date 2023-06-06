@@ -1,6 +1,9 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+
 import { MessageService } from '../../services/message/message.service';
 import { AuthService } from '../../services/auth/auth.service';
+import { ToolbarService } from '../../services/toolbar/toolbar.service';
+
 import { Thread } from '../../models/thread.model';
 
 import { User } from '../../models/user.model';
@@ -8,6 +11,8 @@ import { count } from 'rxjs';
 
 import { MatMenu } from '@angular/material/menu';
 import { MatMenuTrigger } from '@angular/material/menu';
+
+
 
 
 
@@ -28,12 +33,19 @@ export class InboxPageComponent implements OnInit {
 
 
 
-  constructor(private messageService: MessageService, private authService: AuthService) {}
+  constructor(
+    private messageService: MessageService,
+    private toolbarService: ToolbarService, 
+    private authService: AuthService) {}
 
 
   async ngOnInit(): Promise<void> {
     this.isLoading = true;
+
+    this.toolbarService.changeTitle('Inbox');
+
     this.currentUser = await this.authService.getCurrentUser();
+
   
     if (this.currentUser) {
       // Get the threads for the current user

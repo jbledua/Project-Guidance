@@ -8,8 +8,9 @@ import { MessageService } from 'src/app/services/message/message.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { AuthService } from 'src/app/services/auth/auth.service';
-
 import { UserService } from 'src/app/services/user/user.service';
+import { ToolbarService } from 'src/app/services/toolbar/toolbar.service';
+
 import { User } from 'src/app/models/user.model';
 
 import { ViewChild, ElementRef } from '@angular/core';
@@ -44,6 +45,7 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
     private authService: AuthService,
     private messageService: MessageService,
     private userService: UserService,
+    private toolbarService: ToolbarService,
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {}
@@ -54,6 +56,10 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
     this.thread = await this.messageService.getThread(this.threadId);
     this.messages = await this.messageService.getMessagesForThread(this.threadId);
 
+    // Replace \n with <br> in message content
+    for (let message of this.messages) {
+      message.content = message.content.replace(/\\n/g, '<br>');
+    }
 
     // Mark all messages as read
     for (let message of this.messages) {
@@ -61,6 +67,9 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
           await this.messageService.markMessageAsRead(message, this.currentUser?.id || '');
       }
     }
+
+    // Update title
+    this.toolbarService.changeTitle('Thread: ' + this.thread?.subject);
   }
 
   // Initialize the component
@@ -69,6 +78,12 @@ export class ThreadPageComponent implements OnInit, OnDestroy  {
     // Set a flag to indicate loading
     this.isLoading = true;
 
+    if(this.thread?.subject != undefined)
+    {
+      // Set the page title
+      this.toolbarService.changeTitle('Thread: ' + this.thread.subject);
+    }
+    
     window.addEventListener('scroll', () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       const scrollHeight = document.documentElement.scrollHeight;

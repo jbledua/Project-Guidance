@@ -11,6 +11,7 @@ import { User } from 'src/app/models/user.model';
 
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { MessageService } from 'src/app/services/message/message.service';
+import { ToolbarService } from 'src/app/services/toolbar/toolbar.service';
 
 import { Subscription } from 'rxjs';
 
@@ -43,6 +44,7 @@ export class NewThreadPageComponent implements OnInit {
     private userService: UserService,
     private authService: AuthService,
     private messageService: MessageService,
+    private toolbarService: ToolbarService,
     private formBuilder: FormBuilder,
     private router: Router,  // Add this line
   ) {
@@ -53,7 +55,7 @@ export class NewThreadPageComponent implements OnInit {
    }
 
   async ngOnInit(): Promise<void> {
-
+    this.toolbarService.changeTitle('New Thread');
     
 
     try {

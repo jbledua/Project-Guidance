@@ -252,6 +252,13 @@ public async deleteThread(threadId: string): Promise<void> {
           timestamp: data['timestamp'].toDate(),
           read: data['read'] || {},
         };
+
+        // for (let message of this.messages) {
+        //   message.content = message.content.replace(/\\n/g, '<br>');
+        // }
+        //message.content = message.content.replace(/\\n/g, '<br>');
+
+
         messages.push(message);
       });
 

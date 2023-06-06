@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms'; // Import FormBuilder, FormGroup, and Validators
+
+// Import AuthService and ToolbarService
 import { AuthService } from '../../services/auth/auth.service'; // Import AuthService
+import { ToolbarService } from '../../services/toolbar/toolbar.service'; // Import ToolbarService
+
 import { Router } from '@angular/router';
 
 
@@ -20,6 +24,7 @@ export class LoginPageComponent {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
+    private toolbarService: ToolbarService,
     private router: Router
   ) {
     this.loginForm = this.formBuilder.group({
@@ -27,6 +32,10 @@ export class LoginPageComponent {
       password: ['', Validators.required],
     });
   } // End of constructor()
+
+  ngOnInit() {
+    this.toolbarService.changeTitle('Login');
+  }
 
 
   // Method to submit the login form
